@@ -9,7 +9,7 @@ from langgraph.graph.message import add_messages
 from langchain_core.messages import BaseMessage
 from loguru import logger
 
-from src.agents import EditorAgent, ResearcherAgent, WriterAgent
+from src.agents import EditorAgent, PlannerAgent, ResearcherAgent, WriterAgent
 from src.models.content import (
     ContentRequest,
     ContentResponse,
@@ -54,14 +54,17 @@ class ContentPipeline:
     def __init__(self):
         """Initialize the content pipeline with all agents."""
         self.researcher = ResearcherAgent()
+        self.planner = PlannerAgent()
         self.writer = WriterAgent()
         self.editor = EditorAgent()
 
         self.graph = self._build_graph()
-        logger.info("ContentPipeline initialized")
+        logger.info("ContentPipeline initialized with 4 agents")
 
     def _build_graph(self) -> StateGraph:
         """Build the LangGraph workflow.
+
+        Pipeline: Research → Plan → Write → Edit → Finalize
 
         Returns:
             Compiled StateGraph
@@ -71,14 +74,16 @@ class ContentPipeline:
 
         # Add nodes for each agent
         workflow.add_node("research", self._research_node)
+        workflow.add_node("plan", self._plan_node)
         workflow.add_node("write", self._write_node)
         workflow.add_node("edit", self._edit_node)
         workflow.add_node("finalize", self._finalize_node)
 
-        # Define the edges (flow)
+        # Define the edges (flow): Research → Plan → Write → Edit → Finalize
         workflow.set_entry_point("research")
 
-        workflow.add_edge("research", "write")
+        workflow.add_edge("research", "plan")
+        workflow.add_edge("plan", "write")
         workflow.add_edge("write", "edit")
         workflow.add_edge("edit", "finalize")
         workflow.add_edge("finalize", END)
@@ -105,6 +110,27 @@ class ContentPipeline:
             }
         except Exception as e:
             logger.error(f"Research failed: {e}")
+            return {"error": str(e), "status": ContentStatus.FAILED}
+
+    async def _plan_node(self, state: ContentState) -> dict[str, Any]:
+        """Execute the planner agent.
+
+        Args:
+            state: Current pipeline state
+
+        Returns:
+            Updated state with content outline
+        """
+        logger.info(f"[{state['content_id']}] Starting planning phase")
+        try:
+            result = await self.planner.process(dict(state))
+            return {
+                "outline": result.get("outline"),
+                "status": ContentStatus.PLANNING,
+                "messages": result.get("messages", []),
+            }
+        except Exception as e:
+            logger.error(f"Planning failed: {e}")
             return {"error": str(e), "status": ContentStatus.FAILED}
 
     async def _write_node(self, state: ContentState) -> dict[str, Any]:

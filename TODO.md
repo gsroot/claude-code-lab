@@ -1,6 +1,6 @@
 # 📋 ContentForge AI - TODO List
 
-> 마지막 업데이트: 2025-12-10
+> 마지막 업데이트: 2025-12-10 (Updated)
 
 ---
 
@@ -17,6 +17,7 @@
 | 에이전트 | ResearcherAgent | `src/agents/researcher.py` |
 | 에이전트 | WriterAgent | `src/agents/writer.py` |
 | 에이전트 | EditorAgent | `src/agents/editor.py` |
+| 에이전트 | PlannerAgent | `src/agents/planner.py` |
 | 워크플로우 | ContentPipeline (LangGraph) | `src/workflows/content_pipeline.py` |
 | MCP | MCPToolManager 클라이언트 | `src/mcp/client.py` |
 | API | FastAPI 앱 | `src/api/main.py` |
@@ -27,7 +28,7 @@
 | 문서 | README.md (한국어) | `README.md` |
 | 문서 | 서비스 기획서 | `SERVICE_PLAN.md` |
 
-### 📈 진행률: **Phase 1 MVP - 약 60% 완료**
+### 📈 진행률: **Phase 1 MVP - 약 70% 완료**
 
 ---
 
@@ -40,9 +41,10 @@
 - [x] ResearcherAgent 구현
 - [x] WriterAgent 구현
 - [x] EditorAgent 구현
-- [ ] **PlannerAgent 구현** - 콘텐츠 아웃라인 생성
+- [x] **PlannerAgent 구현** - 콘텐츠 아웃라인 생성 ✅
   - 파일: `src/agents/planner.py`
   - 기능: 리서치 결과를 바탕으로 콘텐츠 구조 설계
+  - JSON 기반 구조화된 아웃라인 생성
 
 #### MCP 연동
 - [x] MCP 클라이언트 기본 구조
@@ -54,7 +56,8 @@
 
 #### 워크플로우 개선
 - [x] 기본 파이프라인 (Research → Write → Edit)
-- [ ] **Planner 노드 추가** (Research → Plan → Write → Edit)
+- [x] **Planner 노드 추가** (Research → Plan → Write → Edit) ✅
+  - 파이프라인: Research → Plan → Write → Edit → Finalize
 - [ ] **에러 처리 강화**
 - [ ] **재시도 로직 추가**
 
@@ -94,8 +97,11 @@
 
 #### 테스트
 - [x] 기본 테스트 구조
-- [ ] **에이전트 단위 테스트 확장**
-- [ ] **워크플로우 통합 테스트**
+- [x] **에이전트 단위 테스트 확장** ✅
+  - PlannerAgent 테스트 추가 (`tests/test_agents/test_planner.py`)
+  - ResearcherAgent 테스트 확장
+- [x] **워크플로우 통합 테스트** ✅
+  - ContentPipeline 테스트 추가 (`tests/test_workflows/test_content_pipeline.py`)
 - [ ] **API 엔드투엔드 테스트**
 - [ ] **테스트 커버리지 80% 이상**
 
@@ -215,7 +221,7 @@
 ### 에이전트
 ```
 src/agents/
-├── planner.py          # Week 1-2
+├── planner.py          # Week 1-2 ✅ 완료
 ├── trend_analyst.py    # Week 5-8
 ├── seo_optimizer.py    # Week 5-8
 └── visual_creator.py   # Week 5-8
@@ -282,10 +288,10 @@ ui/pages/
 ## 🎯 이번 주 우선순위 (즉시 실행)
 
 ### 높음 (High)
-1. [ ] PlannerAgent 구현
+1. [x] ~~PlannerAgent 구현~~ ✅ 완료
 2. [ ] MCP Fetch 서버 실제 연동 테스트
-3. [ ] 워크플로우에 Planner 노드 추가
-4. [ ] 에이전트 테스트 확장
+3. [x] ~~워크플로우에 Planner 노드 추가~~ ✅ 완료
+4. [x] ~~에이전트 테스트 확장~~ ✅ 완료
 
 ### 중간 (Medium)
 5. [ ] WebSocket 실시간 진행 상황
