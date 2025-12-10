@@ -1,5 +1,6 @@
-"""Main content generation pipeline using LangGraph."""
+"""Main content generation pipeline using LangGraph with retry and error handling."""
 
+import time
 import uuid
 from datetime import datetime
 from typing import Annotated, Any, TypedDict
@@ -17,6 +18,14 @@ from src.models.content import (
     ResearchResult,
     ContentOutline,
 )
+from src.utils.retry import retry_async, LLM_RETRY_CONFIG, RetryError
+from src.utils.exceptions import (
+    ResearchError,
+    PlanningError,
+    WritingError,
+    EditingError,
+)
+from src.utils.logging import PipelineLogger
 
 
 class ContentState(TypedDict):
@@ -29,6 +38,7 @@ class ContentState(TypedDict):
     # Processing state
     status: ContentStatus
     messages: Annotated[list[BaseMessage], add_messages]
+    current_phase: str
 
     # Agent outputs
     research: ResearchResult | None
@@ -39,16 +49,24 @@ class ContentState(TypedDict):
     # Metadata
     started_at: datetime
     error: str | None
+    retry_count: int
+    phase_timings: dict[str, float]
 
 
 class ContentPipeline:
-    """LangGraph-based content generation pipeline.
+    """LangGraph-based content generation pipeline with retry and error handling.
 
     Orchestrates multiple agents to create high-quality content:
     1. Researcher: Gathers information and facts
-    2. Planner: Creates content outline (optional)
+    2. Planner: Creates content outline
     3. Writer: Writes the initial draft
     4. Editor: Polishes and improves the content
+
+    Features:
+    - Automatic retry with exponential backoff
+    - Detailed error tracking
+    - Phase timing metrics
+    - Structured logging
     """
 
     def __init__(self):
@@ -59,7 +77,7 @@ class ContentPipeline:
         self.editor = EditorAgent()
 
         self.graph = self._build_graph()
-        logger.info("ContentPipeline initialized with 4 agents")
+        logger.info("ContentPipeline initialized with 4 agents (retry enabled)")
 
     def _build_graph(self) -> StateGraph:
         """Build the LangGraph workflow.
@@ -69,7 +87,6 @@ class ContentPipeline:
         Returns:
             Compiled StateGraph
         """
-        # Create the graph
         workflow = StateGraph(ContentState)
 
         # Add nodes for each agent
@@ -88,11 +105,59 @@ class ContentPipeline:
         workflow.add_edge("edit", "finalize")
         workflow.add_edge("finalize", END)
 
-        # Compile the graph
         return workflow.compile()
 
+    async def _execute_with_retry(
+        self,
+        agent_process: Any,
+        state: ContentState,
+        phase_name: str,
+        error_class: type[Exception],
+    ) -> dict[str, Any]:
+        """Execute an agent with retry logic.
+
+        Args:
+            agent_process: Agent's process method
+            state: Current pipeline state
+            phase_name: Name of the current phase
+            error_class: Exception class to raise on failure
+
+        Returns:
+            Agent result dictionary
+        """
+        pipeline_logger = PipelineLogger(state["content_id"])
+        start_time = time.time()
+
+        pipeline_logger.phase_start(phase_name)
+
+        try:
+            result = await retry_async(
+                agent_process,
+                dict(state),
+                config=LLM_RETRY_CONFIG,
+                operation_name=f"{phase_name}_agent",
+            )
+
+            elapsed_ms = (time.time() - start_time) * 1000
+            pipeline_logger.phase_complete(phase_name, elapsed_ms)
+
+            return result
+
+        except RetryError as e:
+            elapsed_ms = (time.time() - start_time) * 1000
+            pipeline_logger.phase_error(phase_name, e)
+
+            raise error_class(
+                f"{phase_name} failed after retries: {e.last_exception}",
+                details={
+                    "content_id": state["content_id"],
+                    "elapsed_ms": elapsed_ms,
+                    "last_error": str(e.last_exception),
+                },
+            )
+
     async def _research_node(self, state: ContentState) -> dict[str, Any]:
-        """Execute the research agent.
+        """Execute the research agent with retry.
 
         Args:
             state: Current pipeline state
@@ -100,20 +165,31 @@ class ContentPipeline:
         Returns:
             Updated state with research results
         """
-        logger.info(f"[{state['content_id']}] Starting research phase")
         try:
-            result = await self.researcher.process(dict(state))
+            result = await self._execute_with_retry(
+                self.researcher.process,
+                state,
+                "research",
+                ResearchError,
+            )
+
             return {
                 "research": result.get("research"),
                 "status": ContentStatus.RESEARCHING,
+                "current_phase": "research",
                 "messages": result.get("messages", []),
             }
-        except Exception as e:
-            logger.error(f"Research failed: {e}")
-            return {"error": str(e), "status": ContentStatus.FAILED}
+
+        except ResearchError as e:
+            logger.error(f"[{state['content_id']}] Research failed: {e}")
+            return {
+                "error": str(e),
+                "status": ContentStatus.FAILED,
+                "current_phase": "research",
+            }
 
     async def _plan_node(self, state: ContentState) -> dict[str, Any]:
-        """Execute the planner agent.
+        """Execute the planner agent with retry.
 
         Args:
             state: Current pipeline state
@@ -121,20 +197,35 @@ class ContentPipeline:
         Returns:
             Updated state with content outline
         """
-        logger.info(f"[{state['content_id']}] Starting planning phase")
+        # Skip if previous phase failed
+        if state.get("error"):
+            return {"status": ContentStatus.FAILED}
+
         try:
-            result = await self.planner.process(dict(state))
+            result = await self._execute_with_retry(
+                self.planner.process,
+                state,
+                "planning",
+                PlanningError,
+            )
+
             return {
                 "outline": result.get("outline"),
                 "status": ContentStatus.PLANNING,
+                "current_phase": "planning",
                 "messages": result.get("messages", []),
             }
-        except Exception as e:
-            logger.error(f"Planning failed: {e}")
-            return {"error": str(e), "status": ContentStatus.FAILED}
+
+        except PlanningError as e:
+            logger.error(f"[{state['content_id']}] Planning failed: {e}")
+            return {
+                "error": str(e),
+                "status": ContentStatus.FAILED,
+                "current_phase": "planning",
+            }
 
     async def _write_node(self, state: ContentState) -> dict[str, Any]:
-        """Execute the writer agent.
+        """Execute the writer agent with retry.
 
         Args:
             state: Current pipeline state
@@ -142,20 +233,35 @@ class ContentPipeline:
         Returns:
             Updated state with draft content
         """
-        logger.info(f"[{state['content_id']}] Starting writing phase")
+        # Skip if previous phase failed
+        if state.get("error"):
+            return {"status": ContentStatus.FAILED}
+
         try:
-            result = await self.writer.process(dict(state))
+            result = await self._execute_with_retry(
+                self.writer.process,
+                state,
+                "writing",
+                WritingError,
+            )
+
             return {
                 "draft_content": result.get("draft_content"),
                 "status": ContentStatus.WRITING,
+                "current_phase": "writing",
                 "messages": result.get("messages", []),
             }
-        except Exception as e:
-            logger.error(f"Writing failed: {e}")
-            return {"error": str(e), "status": ContentStatus.FAILED}
+
+        except WritingError as e:
+            logger.error(f"[{state['content_id']}] Writing failed: {e}")
+            return {
+                "error": str(e),
+                "status": ContentStatus.FAILED,
+                "current_phase": "writing",
+            }
 
     async def _edit_node(self, state: ContentState) -> dict[str, Any]:
-        """Execute the editor agent.
+        """Execute the editor agent with retry.
 
         Args:
             state: Current pipeline state
@@ -163,17 +269,32 @@ class ContentPipeline:
         Returns:
             Updated state with edited content
         """
-        logger.info(f"[{state['content_id']}] Starting editing phase")
+        # Skip if previous phase failed
+        if state.get("error"):
+            return {"status": ContentStatus.FAILED}
+
         try:
-            result = await self.editor.process(dict(state))
+            result = await self._execute_with_retry(
+                self.editor.process,
+                state,
+                "editing",
+                EditingError,
+            )
+
             return {
                 "content": result.get("content"),
                 "status": ContentStatus.EDITING,
+                "current_phase": "editing",
                 "messages": result.get("messages", []),
             }
-        except Exception as e:
-            logger.error(f"Editing failed: {e}")
-            return {"error": str(e), "status": ContentStatus.FAILED}
+
+        except EditingError as e:
+            logger.error(f"[{state['content_id']}] Editing failed: {e}")
+            return {
+                "error": str(e),
+                "status": ContentStatus.FAILED,
+                "current_phase": "editing",
+            }
 
     async def _finalize_node(self, state: ContentState) -> dict[str, Any]:
         """Finalize the content generation.
@@ -184,8 +305,30 @@ class ContentPipeline:
         Returns:
             Final state update
         """
-        logger.info(f"[{state['content_id']}] Finalizing content")
-        return {"status": ContentStatus.COMPLETED}
+        content_id = state["content_id"]
+
+        # Check if any error occurred
+        if state.get("error"):
+            logger.warning(f"[{content_id}] Pipeline completed with errors")
+            return {
+                "status": ContentStatus.FAILED,
+                "current_phase": "finalize",
+            }
+
+        # Validate final content
+        if not state.get("content"):
+            logger.warning(f"[{content_id}] Pipeline completed but no content generated")
+            return {
+                "error": "No content was generated",
+                "status": ContentStatus.FAILED,
+                "current_phase": "finalize",
+            }
+
+        logger.info(f"[{content_id}] Content generation completed successfully")
+        return {
+            "status": ContentStatus.COMPLETED,
+            "current_phase": "finalize",
+        }
 
     async def generate(self, request: ContentRequest) -> ContentResponse:
         """Generate content using the full pipeline.
@@ -199,7 +342,7 @@ class ContentPipeline:
         content_id = str(uuid.uuid4())
         started_at = datetime.utcnow()
 
-        logger.info(f"Starting content generation [{content_id}]: {request.topic}")
+        logger.info(f"[{content_id}] Starting content generation: {request.topic[:50]}...")
 
         # Initialize state
         initial_state: ContentState = {
@@ -207,28 +350,40 @@ class ContentPipeline:
             "content_id": content_id,
             "status": ContentStatus.PENDING,
             "messages": [],
+            "current_phase": "init",
             "research": None,
             "outline": None,
             "draft_content": None,
             "content": None,
             "started_at": started_at,
             "error": None,
+            "retry_count": 0,
+            "phase_timings": {},
         }
 
-        # Run the pipeline
         try:
             final_state = await self.graph.ainvoke(initial_state)
             completed_at = datetime.utcnow()
             processing_time = (completed_at - started_at).total_seconds()
 
-            logger.info(
-                f"Content generation completed [{content_id}] "
-                f"in {processing_time:.2f}s"
-            )
+            # Determine final status
+            final_status = final_state.get("status", ContentStatus.COMPLETED)
+            error_message = final_state.get("error")
+
+            if final_status == ContentStatus.COMPLETED:
+                logger.info(
+                    f"[{content_id}] Generation completed successfully "
+                    f"in {processing_time:.2f}s"
+                )
+            else:
+                logger.warning(
+                    f"[{content_id}] Generation failed at phase "
+                    f"'{final_state.get('current_phase', 'unknown')}': {error_message}"
+                )
 
             return ContentResponse(
                 id=content_id,
-                status=final_state.get("status", ContentStatus.COMPLETED),
+                status=final_status,
                 request=request,
                 research=final_state.get("research"),
                 outline=final_state.get("outline"),
@@ -239,12 +394,18 @@ class ContentPipeline:
             )
 
         except Exception as e:
-            logger.error(f"Pipeline failed [{content_id}]: {e}")
+            completed_at = datetime.utcnow()
+            processing_time = (completed_at - started_at).total_seconds()
+
+            logger.error(f"[{content_id}] Pipeline crashed: {e}")
+
             return ContentResponse(
                 id=content_id,
                 status=ContentStatus.FAILED,
                 request=request,
                 created_at=started_at,
+                completed_at=completed_at,
+                processing_time_seconds=processing_time,
             )
 
 
