@@ -1,6 +1,6 @@
 # 📋 ContentForge AI - TODO List
 
-> 마지막 업데이트: 2025-12-10 (UI 진행 표시, 설정 페이지, Docker 설정 완료)
+> 마지막 업데이트: 2025-12-10 (PostgreSQL, Redis, CI/CD 파이프라인 완료)
 
 ---
 
@@ -41,8 +41,16 @@
 | 인프라 | Docker UI 설정 | `docker/Dockerfile.ui` |
 | 인프라 | Docker Compose | `docker-compose.yml` |
 | 인프라 | DB 초기화 스크립트 | `docker/init.sql` |
+| 데이터베이스 | PostgreSQL 연동 | `src/db/database.py` |
+| 데이터베이스 | SQLAlchemy 모델 | `src/db/models.py` |
+| 데이터베이스 | 콘텐츠 Repository | `src/db/repository.py` |
+| 데이터베이스 | Redis 캐시 | `src/db/cache.py` |
+| 인프라 | CI 파이프라인 | `.github/workflows/ci.yml` |
+| 인프라 | CD 파이프라인 | `.github/workflows/cd.yml` |
+| 테스트 | DB Repository 테스트 | `tests/test_db/test_repository.py` |
+| 테스트 | 캐시 테스트 | `tests/test_db/test_cache.py` |
 
-### 📈 진행률: **Phase 1 MVP - 약 92% 완료**
+### 📈 진행률: **Phase 1 MVP - 약 97% 완료**
 
 ---
 
@@ -98,14 +106,19 @@
   - /content/{id}/export 엔드포인트 추가
 
 #### 데이터베이스 연동
-- [ ] **PostgreSQL 연동**
+- [x] **PostgreSQL 연동** ✅ 완료
   - 파일: `src/db/database.py`
-  - SQLAlchemy 모델 정의
-- [ ] **Redis 캐시 연동**
-  - 생성 결과 캐싱
-  - Rate limiting
-- [ ] **콘텐츠 영구 저장**
-  - 현재: 인메모리 → 변경: DB 저장
+  - 파일: `src/db/models.py` (SQLAlchemy ORM)
+  - 파일: `src/db/repository.py` (Repository 패턴)
+  - 비동기 SQLAlchemy + asyncpg
+- [x] **Redis 캐시 연동** ✅ 완료
+  - 파일: `src/db/cache.py`
+  - ContentCache: 콘텐츠 캐싱
+  - RateLimiter: Rate limiting
+  - 진행 상황 캐싱
+- [x] **콘텐츠 영구 저장** ✅ 완료
+  - Repository 패턴으로 DB 저장 구현
+  - 테스트: `tests/test_db/`
 
 #### 사용자 인증
 - [ ] **JWT 인증 구현**
@@ -224,8 +237,14 @@
   - 파일: `docker-compose.yml` (전체 오케스트레이션)
   - 파일: `docker/init.sql` (PostgreSQL 초기화)
   - 구성: API, UI, PostgreSQL, Redis 포함
-- [ ] **CI/CD 파이프라인**
-  - GitHub Actions 설정
+- [x] **CI/CD 파이프라인** ✅ 완료
+  - 파일: `.github/workflows/ci.yml`
+    - Lint (Ruff), Type Check (mypy), Test (pytest)
+    - PostgreSQL/Redis 서비스 컨테이너
+    - Docker 이미지 빌드, 보안 스캔 (Bandit)
+  - 파일: `.github/workflows/cd.yml`
+    - Docker 이미지 빌드 & 푸시 (GHCR)
+    - Staging/Production 배포 워크플로우
 - [ ] **프로덕션 배포**
   - AWS/GCP/Vercel
 
@@ -306,9 +325,17 @@ src/mcp/servers/
 ### 데이터베이스
 ```
 src/db/
-├── database.py         # Week 3-4
-├── models.py           # Week 3-4
+├── __init__.py         # Week 3-4 ✅ 완료
+├── database.py         # Week 3-4 ✅ 완료
+├── models.py           # Week 3-4 ✅ 완료
+├── repository.py       # Week 3-4 ✅ 완료
+├── cache.py            # Week 3-4 ✅ 완료
 └── migrations/         # Week 3-4
+
+tests/test_db/
+├── __init__.py         # Week 3-4 ✅ 완료
+├── test_repository.py  # Week 3-4 ✅ 완료
+└── test_cache.py       # Week 3-4 ✅ 완료
 ```
 
 ### 인프라
@@ -323,7 +350,8 @@ docker-compose.yml      # Week 13-14 ✅ 완료
 .dockerignore           # Week 13-14 ✅ 완료
 
 .github/workflows/
-└── ci.yml              # Week 13-14
+├── ci.yml              # Week 13-14 ✅ 완료
+└── cd.yml              # Week 13-14 ✅ 완료
 ```
 
 ### UI 페이지
@@ -345,15 +373,17 @@ ui/pages/
 
 ### 중간 (Medium)
 5. [x] ~~WebSocket 실시간 진행 상황~~ ✅ 완료
-6. [ ] PostgreSQL 연동 시작
+6. [x] ~~PostgreSQL 연동~~ ✅ 완료
 7. [x] ~~UI 실시간 진행 표시~~ ✅ 완료
 8. [x] ~~설정 페이지 추가~~ ✅ 완료
 9. [x] ~~Docker 설정~~ ✅ 완료
+10. [x] ~~Redis 캐시 연동~~ ✅ 완료
+11. [x] ~~CI/CD 파이프라인~~ ✅ 완료
 
 ### 낮음 (Low)
-10. [ ] 문서 개선
-11. [ ] 코드 리팩토링
-12. [x] ~~로깅 시스템 개선~~ ✅ 완료
+12. [ ] 문서 개선
+13. [ ] 코드 리팩토링
+14. [x] ~~로깅 시스템 개선~~ ✅ 완료
     - 파일: `src/utils/logging.py`
     - PipelineLogger: 콘텐츠 생성 진행 상황 추적
     - 구조화된 로깅 (loguru 기반)
