@@ -1,5 +1,5 @@
 """API routes."""
 
-from src.api.routes import content, websocket
+from src.api.routes import auth, content, websocket
 
-__all__ = ["content", "websocket"]
+__all__ = ["auth", "content", "websocket"]

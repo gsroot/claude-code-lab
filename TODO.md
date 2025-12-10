@@ -1,6 +1,6 @@
 # 📋 ContentForge AI - TODO List
 
-> 마지막 업데이트: 2025-12-10 (PostgreSQL, Redis, CI/CD 파이프라인 완료)
+> 마지막 업데이트: 2025-12-10 (JWT 인증, 사용자 모델, 히스토리 페이지 완료)
 
 ---
 
@@ -49,8 +49,13 @@
 | 인프라 | CD 파이프라인 | `.github/workflows/cd.yml` |
 | 테스트 | DB Repository 테스트 | `tests/test_db/test_repository.py` |
 | 테스트 | 캐시 테스트 | `tests/test_db/test_cache.py` |
+| 인증 | JWT 인증 구현 | `src/api/routes/auth.py` |
+| 인증 | 인증 서비스 | `src/services/auth_service.py` |
+| 모델 | 사용자 Pydantic 모델 | `src/models/user.py` |
+| UI | 히스토리 페이지 | `ui/pages/history.py` |
+| 테스트 | 인증 테스트 | `tests/test_api/test_auth.py` |
 
-### 📈 진행률: **Phase 1 MVP - 약 97% 완료**
+### 📈 진행률: **Phase 1 MVP - 100% 완료** 🎉
 
 ---
 
@@ -121,11 +126,19 @@
   - 테스트: `tests/test_db/`
 
 #### 사용자 인증
-- [ ] **JWT 인증 구현**
+- [x] **JWT 인증 구현** ✅ 완료
   - 파일: `src/api/routes/auth.py`
-- [ ] **사용자 모델**
+  - 파일: `src/services/auth_service.py`
+  - 엔드포인트: /register, /login, /refresh, /me, /change-password, /logout
+  - passlib + python-jose 기반 JWT 토큰
+- [x] **사용자 모델** ✅ 완료
   - 파일: `src/models/user.py`
-- [ ] **Supabase 또는 자체 인증**
+  - UserCreate, UserLogin, UserResponse, Token 모델
+  - 이메일/비밀번호 검증
+- [x] **자체 인증 시스템** ✅ 완료
+  - Bearer 토큰 인증
+  - 리프레시 토큰 지원
+  - 비밀번호 변경 기능
 
 #### UI 개선
 - [x] Streamlit 기본 UI
@@ -135,7 +148,12 @@
   - 단계별 진행률 표시 (Research → Plan → Write → Edit)
   - 생성 완료 시 내보내기 버튼 제공
 - [ ] **콘텐츠 편집 기능**
-- [ ] **히스토리 페이지 개선**
+- [x] **히스토리 페이지 개선** ✅ 완료
+  - 파일: `ui/pages/history.py`
+  - 콘텐츠 목록 페이지네이션
+  - 상태/키워드 필터링
+  - 상세 보기 (내용, 아웃라인, 리서치)
+  - 내보내기 및 삭제 기능
 - [x] **설정 페이지** ✅ 완료
   - 파일: `ui/pages/settings.py`
   - API 연결 설정
@@ -293,7 +311,7 @@ src/agents/
 ### API
 ```
 src/api/routes/
-├── auth.py             # Week 3-4
+├── auth.py             # Week 3-4 ✅ 완료
 ├── billing.py          # Week 9-12
 └── websocket.py        # Week 3-4 ✅ 완료
 ```
@@ -301,7 +319,7 @@ src/api/routes/
 ### 모델
 ```
 src/models/
-├── user.py             # Week 3-4
+├── user.py             # Week 3-4 ✅ 완료
 ├── workflow.py         # Week 3-4
 └── template.py         # Week 9-12
 ```
@@ -310,6 +328,7 @@ src/models/
 ```
 src/services/
 ├── export_service.py   # Week 3-4 ✅ 완료
+├── auth_service.py     # Week 3-4 ✅ 완료
 ├── content_service.py  # Week 3-4
 ├── user_service.py     # Week 3-4
 └── billing_service.py  # Week 9-12
@@ -358,6 +377,7 @@ docker-compose.yml      # Week 13-14 ✅ 완료
 ```
 ui/pages/
 ├── settings.py         # Week 3-4 ✅ 완료
+├── history.py          # Week 3-4 ✅ 완료
 └── analytics.py        # Week 9-12
 ```
 
@@ -379,11 +399,14 @@ ui/pages/
 9. [x] ~~Docker 설정~~ ✅ 완료
 10. [x] ~~Redis 캐시 연동~~ ✅ 완료
 11. [x] ~~CI/CD 파이프라인~~ ✅ 완료
+12. [x] ~~JWT 인증 구현~~ ✅ 완료
+13. [x] ~~사용자 모델~~ ✅ 완료
+14. [x] ~~히스토리 페이지 개선~~ ✅ 완료
 
 ### 낮음 (Low)
-12. [ ] 문서 개선
-13. [ ] 코드 리팩토링
-14. [x] ~~로깅 시스템 개선~~ ✅ 완료
+15. [ ] 문서 개선
+16. [ ] 코드 리팩토링
+17. [x] ~~로깅 시스템 개선~~ ✅ 완료
     - 파일: `src/utils/logging.py`
     - PipelineLogger: 콘텐츠 생성 진행 상황 추적
     - 구조화된 로깅 (loguru 기반)
