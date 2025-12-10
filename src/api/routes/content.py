@@ -1,10 +1,12 @@
 """Content generation API routes."""
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Query
+from fastapi.responses import Response
 from loguru import logger
 
 from src.models.content import ContentRequest, ContentResponse, ContentStatus
 from src.workflows.content_pipeline import generate_content
+from src.services.export_service import ExportService, ExportFormat
 
 router = APIRouter()
 
@@ -151,3 +153,95 @@ async def delete_content(content_id: str):
 
     del content_storage[content_id]
     return {"message": "Content deleted", "content_id": content_id}
+
+
+@router.get("/content/{content_id}/export")
+async def export_content(
+    content_id: str,
+    format: ExportFormat = Query(default=ExportFormat.MARKDOWN, description="Export format"),
+):
+    """Export content to various formats.
+
+    Supported formats:
+    - markdown: Markdown with YAML frontmatter
+    - html: Styled HTML document
+    - pdf: Print-ready HTML (save as PDF)
+    - json: Complete JSON export with all metadata
+    - txt: Plain text
+
+    Args:
+        content_id: Content ID
+        format: Export format (markdown, html, pdf, json, txt)
+
+    Returns:
+        Exported content as file download
+    """
+    if content_id not in content_storage:
+        raise HTTPException(status_code=404, detail="Content not found")
+
+    content = content_storage[content_id]
+
+    if content.status != ContentStatus.COMPLETED:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Content is not ready for export. Status: {content.status.value}",
+        )
+
+    try:
+        exported = ExportService.export(content, format)
+        filename = ExportService.get_filename(content, format)
+        content_type = ExportService.get_content_type(format)
+
+        return Response(
+            content=exported,
+            media_type=content_type,
+            headers={
+                "Content-Disposition": f'attachment; filename="{filename}"',
+            },
+        )
+    except Exception as e:
+        logger.error(f"Export failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Export failed: {str(e)}")
+
+
+@router.get("/content/{content_id}/export/formats")
+async def get_export_formats():
+    """Get available export formats.
+
+    Returns:
+        List of available export formats with descriptions
+    """
+    return {
+        "formats": [
+            {
+                "id": ExportFormat.MARKDOWN.value,
+                "name": "Markdown",
+                "extension": "md",
+                "description": "Markdown format with YAML frontmatter",
+            },
+            {
+                "id": ExportFormat.HTML.value,
+                "name": "HTML",
+                "extension": "html",
+                "description": "Styled HTML document",
+            },
+            {
+                "id": ExportFormat.PDF.value,
+                "name": "PDF",
+                "extension": "pdf",
+                "description": "Print-ready document (save browser page as PDF)",
+            },
+            {
+                "id": ExportFormat.JSON.value,
+                "name": "JSON",
+                "extension": "json",
+                "description": "Complete JSON with all metadata and structure",
+            },
+            {
+                "id": ExportFormat.TXT.value,
+                "name": "Plain Text",
+                "extension": "txt",
+                "description": "Plain text without formatting",
+            },
+        ]
+    }

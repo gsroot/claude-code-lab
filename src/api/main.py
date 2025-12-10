@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
-from src.api.routes import content
+from src.api.routes import content, websocket
 from src.mcp.client import mcp_manager
 from src.utils.config import settings
 
@@ -58,6 +58,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(content.router, prefix="/api/v1", tags=["content"])
+app.include_router(websocket.router, prefix="/api/v1", tags=["websocket"])
 
 
 @app.get("/")

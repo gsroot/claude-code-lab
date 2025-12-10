@@ -1,6 +1,6 @@
 # 📋 ContentForge AI - TODO List
 
-> 마지막 업데이트: 2025-12-10 (에러 처리, 재시도, 로깅 시스템 완료)
+> 마지막 업데이트: 2025-12-10 (WebSocket, 내보내기, API 테스트 완료)
 
 ---
 
@@ -31,8 +31,12 @@
 | 유틸리티 | 재시도 로직 | `src/utils/retry.py` |
 | 유틸리티 | 로깅 시스템 | `src/utils/logging.py` |
 | 테스트 | 재시도 유틸 테스트 | `tests/test_utils/test_retry.py` |
+| API | WebSocket 실시간 진행 | `src/api/routes/websocket.py` |
+| 서비스 | 콘텐츠 내보내기 | `src/services/export_service.py` |
+| 테스트 | API E2E 테스트 | `tests/test_api/test_content.py` |
+| 테스트 | 내보내기 서비스 테스트 | `tests/test_services/test_export.py` |
 
-### 📈 진행률: **Phase 1 MVP - 약 75% 완료**
+### 📈 진행률: **Phase 1 MVP - 약 85% 완료**
 
 ---
 
@@ -77,9 +81,15 @@
 #### API 확장
 - [x] 콘텐츠 생성 엔드포인트
 - [x] 비동기 생성 엔드포인트
-- [ ] **WebSocket 실시간 진행 상황 전송**
+- [x] **WebSocket 실시간 진행 상황 전송** ✅ 완료
   - 파일: `src/api/routes/websocket.py`
-- [ ] **콘텐츠 내보내기 (Markdown, HTML, PDF)**
+  - ConnectionManager: WebSocket 연결 관리
+  - ProgressTracker: 생성 진행 상황 추적
+  - /ws/content/{id}: 콘텐츠별 실시간 업데이트
+- [x] **콘텐츠 내보내기 (Markdown, HTML, PDF)** ✅ 완료
+  - 파일: `src/services/export_service.py`
+  - 지원 포맷: Markdown, HTML, PDF, JSON, TXT
+  - /content/{id}/export 엔드포인트 추가
 
 #### 데이터베이스 연동
 - [ ] **PostgreSQL 연동**
@@ -115,7 +125,11 @@
   - ContentPipeline 테스트 추가 (`tests/test_workflows/test_content_pipeline.py`)
 - [x] **유틸리티 테스트** ✅
   - 재시도 로직 테스트 추가 (`tests/test_utils/test_retry.py`)
-- [ ] **API 엔드투엔드 테스트**
+- [x] **API 엔드투엔드 테스트** ✅ 완료
+  - 파일: `tests/test_api/test_content.py` (확장)
+  - 건강 체크, 콘텐츠 CRUD, 내보내기, 검증 테스트
+  - 파일: `tests/test_services/test_export.py`
+  - 내보내기 서비스 단위 테스트 (모든 포맷)
 - [ ] **테스트 커버리지 80% 이상**
 
 ---
@@ -245,7 +259,7 @@ src/agents/
 src/api/routes/
 ├── auth.py             # Week 3-4
 ├── billing.py          # Week 9-12
-└── websocket.py        # Week 3-4
+└── websocket.py        # Week 3-4 ✅ 완료
 ```
 
 ### 모델
@@ -259,6 +273,7 @@ src/models/
 ### 서비스
 ```
 src/services/
+├── export_service.py   # Week 3-4 ✅ 완료
 ├── content_service.py  # Week 3-4
 ├── user_service.py     # Week 3-4
 └── billing_service.py  # Week 9-12
@@ -307,7 +322,7 @@ ui/pages/
 4. [x] ~~에이전트 테스트 확장~~ ✅ 완료
 
 ### 중간 (Medium)
-5. [ ] WebSocket 실시간 진행 상황
+5. [x] ~~WebSocket 실시간 진행 상황~~ ✅ 완료
 6. [ ] PostgreSQL 연동 시작
 7. [ ] UI 실시간 진행 표시
 
