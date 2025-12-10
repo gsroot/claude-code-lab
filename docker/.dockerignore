@@ -1,0 +1,70 @@
+# Docker ignore file for ContentForge AI
+
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+.eggs
+*.egg-info
+*.egg
+.mypy_cache
+.pytest_cache
+.ruff_cache
+
+# Virtual environments
+.venv
+venv
+ENV
+env
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.coverage
+htmlcov
+.tox
+.nox
+
+# Documentation
+docs/_build
+
+# Build artifacts
+dist
+build
+
+# Logs
+*.log
+logs
+
+# Environment files (except example)
+.env
+.env.local
+.env.*.local
+
+# Temporary files
+tmp
+temp
+*.tmp
+*.temp
+
+# Database files
+*.db
+*.sqlite
+
+# Docker files in docker directory
+docker/Dockerfile*
+docker/.dockerignore

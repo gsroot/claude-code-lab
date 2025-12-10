@@ -1,6 +1,6 @@
 # 📋 ContentForge AI - TODO List
 
-> 마지막 업데이트: 2025-12-10 (WebSocket, 내보내기, API 테스트 완료)
+> 마지막 업데이트: 2025-12-10 (UI 진행 표시, 설정 페이지, Docker 설정 완료)
 
 ---
 
@@ -35,8 +35,14 @@
 | 서비스 | 콘텐츠 내보내기 | `src/services/export_service.py` |
 | 테스트 | API E2E 테스트 | `tests/test_api/test_content.py` |
 | 테스트 | 내보내기 서비스 테스트 | `tests/test_services/test_export.py` |
+| UI | 실시간 진행 표시 | `ui/app.py` (업데이트) |
+| UI | 설정 페이지 | `ui/pages/settings.py` |
+| 인프라 | Docker API 설정 | `docker/Dockerfile.api` |
+| 인프라 | Docker UI 설정 | `docker/Dockerfile.ui` |
+| 인프라 | Docker Compose | `docker-compose.yml` |
+| 인프라 | DB 초기화 스크립트 | `docker/init.sql` |
 
-### 📈 진행률: **Phase 1 MVP - 약 85% 완료**
+### 📈 진행률: **Phase 1 MVP - 약 92% 완료**
 
 ---
 
@@ -110,11 +116,19 @@
 
 #### UI 개선
 - [x] Streamlit 기본 UI
-- [ ] **실시간 생성 진행 표시**
+- [x] **실시간 생성 진행 표시** ✅ 완료
+  - 파일: `ui/app.py` (업데이트)
+  - API 폴링 기반 진행 상황 표시
+  - 단계별 진행률 표시 (Research → Plan → Write → Edit)
+  - 생성 완료 시 내보내기 버튼 제공
 - [ ] **콘텐츠 편집 기능**
 - [ ] **히스토리 페이지 개선**
-- [ ] **설정 페이지**
+- [x] **설정 페이지** ✅ 완료
   - 파일: `ui/pages/settings.py`
+  - API 연결 설정
+  - 생성 기본값 설정 (콘텐츠 타입, 톤, 워드 카운트, 언어)
+  - 외관 설정
+  - 시스템 정보 및 도움말
 
 #### 테스트
 - [x] 기본 테스트 구조
@@ -204,9 +218,12 @@
 ### Week 13-14: 런칭 준비
 
 #### 인프라
-- [ ] **Docker 설정**
-  - 파일: `docker/Dockerfile`
-  - 파일: `docker/docker-compose.yml`
+- [x] **Docker 설정** ✅ 완료
+  - 파일: `docker/Dockerfile.api` (API 서버)
+  - 파일: `docker/Dockerfile.ui` (Streamlit UI)
+  - 파일: `docker-compose.yml` (전체 오케스트레이션)
+  - 파일: `docker/init.sql` (PostgreSQL 초기화)
+  - 구성: API, UI, PostgreSQL, Redis 포함
 - [ ] **CI/CD 파이프라인**
   - GitHub Actions 설정
 - [ ] **프로덕션 배포**
@@ -297,8 +314,13 @@ src/db/
 ### 인프라
 ```
 docker/
-├── Dockerfile          # Week 13-14
-└── docker-compose.yml  # Week 13-14
+├── Dockerfile.api      # Week 13-14 ✅ 완료
+├── Dockerfile.ui       # Week 13-14 ✅ 완료
+├── init.sql            # Week 13-14 ✅ 완료
+└── .dockerignore       # Week 13-14 ✅ 완료
+
+docker-compose.yml      # Week 13-14 ✅ 완료
+.dockerignore           # Week 13-14 ✅ 완료
 
 .github/workflows/
 └── ci.yml              # Week 13-14
@@ -307,7 +329,7 @@ docker/
 ### UI 페이지
 ```
 ui/pages/
-├── settings.py         # Week 3-4
+├── settings.py         # Week 3-4 ✅ 완료
 └── analytics.py        # Week 9-12
 ```
 
@@ -324,12 +346,14 @@ ui/pages/
 ### 중간 (Medium)
 5. [x] ~~WebSocket 실시간 진행 상황~~ ✅ 완료
 6. [ ] PostgreSQL 연동 시작
-7. [ ] UI 실시간 진행 표시
+7. [x] ~~UI 실시간 진행 표시~~ ✅ 완료
+8. [x] ~~설정 페이지 추가~~ ✅ 완료
+9. [x] ~~Docker 설정~~ ✅ 완료
 
 ### 낮음 (Low)
-8. [ ] 문서 개선
-9. [ ] 코드 리팩토링
-10. [x] ~~로깅 시스템 개선~~ ✅ 완료
+10. [ ] 문서 개선
+11. [ ] 코드 리팩토링
+12. [x] ~~로깅 시스템 개선~~ ✅ 완료
     - 파일: `src/utils/logging.py`
     - PipelineLogger: 콘텐츠 생성 진행 상황 추적
     - 구조화된 로깅 (loguru 기반)
