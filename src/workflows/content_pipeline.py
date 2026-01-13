@@ -154,7 +154,7 @@ class ContentPipeline:
                     "elapsed_ms": elapsed_ms,
                     "last_error": str(e.last_exception),
                 },
-            )
+            ) from e
 
     async def _research_node(self, state: ContentState) -> dict[str, Any]:
         """Execute the research agent with retry.

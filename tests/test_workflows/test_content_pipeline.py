@@ -114,10 +114,10 @@ class TestPipelineNodes:
     def pipeline(self):
         """Create pipeline with mocked agents."""
         with (
-            patch("src.workflows.content_pipeline.ResearcherAgent") as mock_r,
-            patch("src.workflows.content_pipeline.PlannerAgent") as mock_p,
-            patch("src.workflows.content_pipeline.WriterAgent") as mock_w,
-            patch("src.workflows.content_pipeline.EditorAgent") as mock_e,
+            patch("src.workflows.content_pipeline.ResearcherAgent") as _mock_r,
+            patch("src.workflows.content_pipeline.PlannerAgent") as _mock_p,
+            patch("src.workflows.content_pipeline.WriterAgent") as _mock_w,
+            patch("src.workflows.content_pipeline.EditorAgent") as _mock_e,
         ):
             return ContentPipeline()
 
