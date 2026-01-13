@@ -1,11 +1,12 @@
 """Tests for the Planner agent."""
 
 import json
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
 
 from src.agents.planner import PlannerAgent
-from src.models.content import ContentRequest, ContentType, ResearchResult, ContentOutline
+from src.models.content import ContentOutline, ContentRequest, ContentType, ResearchResult
 
 
 @pytest.fixture
@@ -106,24 +107,26 @@ class TestOutlineParsing:
 
     def test_parse_valid_json(self, planner):
         """Test parsing valid JSON response."""
-        json_response = json.dumps({
-            "title": "How AI is Transforming Content Marketing",
-            "hook": "In 2025, AI is no longer optional for marketers.",
-            "sections": [
-                {
-                    "header": "The Rise of AI in Marketing",
-                    "purpose": "Set context",
-                    "points": ["Point 1", "Point 2"]
-                },
-                {
-                    "header": "Key Benefits",
-                    "purpose": "Show value",
-                    "points": ["Speed", "Quality", "Scale"]
-                }
-            ],
-            "conclusion_points": ["AI is essential", "Start now"],
-            "cta": "Try AI tools today"
-        })
+        json_response = json.dumps(
+            {
+                "title": "How AI is Transforming Content Marketing",
+                "hook": "In 2025, AI is no longer optional for marketers.",
+                "sections": [
+                    {
+                        "header": "The Rise of AI in Marketing",
+                        "purpose": "Set context",
+                        "points": ["Point 1", "Point 2"],
+                    },
+                    {
+                        "header": "Key Benefits",
+                        "purpose": "Show value",
+                        "points": ["Speed", "Quality", "Scale"],
+                    },
+                ],
+                "conclusion_points": ["AI is essential", "Start now"],
+                "cta": "Try AI tools today",
+            }
+        )
 
         result = planner._parse_outline(json_response)
 
@@ -208,16 +211,26 @@ class TestPlannerIntegration:
     async def test_process_with_mocked_llm(self, planner, sample_request, sample_research):
         """Test full process with mocked LLM response."""
         mock_response = MagicMock()
-        mock_response.content = json.dumps({
-            "title": "AI Content Marketing Guide",
-            "hook": "Transform your marketing with AI.",
-            "sections": [
-                {"header": "Introduction", "purpose": "Set stage", "points": ["Why AI matters"]},
-                {"header": "Implementation", "purpose": "How to", "points": ["Step 1", "Step 2"]},
-            ],
-            "conclusion_points": ["AI is the future"],
-            "cta": "Start using AI today"
-        })
+        mock_response.content = json.dumps(
+            {
+                "title": "AI Content Marketing Guide",
+                "hook": "Transform your marketing with AI.",
+                "sections": [
+                    {
+                        "header": "Introduction",
+                        "purpose": "Set stage",
+                        "points": ["Why AI matters"],
+                    },
+                    {
+                        "header": "Implementation",
+                        "purpose": "How to",
+                        "points": ["Step 1", "Step 2"],
+                    },
+                ],
+                "conclusion_points": ["AI is the future"],
+                "cta": "Start using AI today",
+            }
+        )
 
         planner.invoke = AsyncMock(return_value=mock_response)
 

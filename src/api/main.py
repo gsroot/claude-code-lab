@@ -1,7 +1,7 @@
 """FastAPI application entry point."""
 
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,7 +19,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     Handles startup and shutdown events.
     """
     # Startup
-    logger.info("Starting ContentForge AI API...")
+    logger.info("Starting Content Mate API...")
 
     # Initialize MCP connections (optional - can be lazy loaded)
     try:
@@ -27,19 +27,19 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     except Exception as e:
         logger.warning(f"MCP initialization failed (non-critical): {e}")
 
-    logger.info("ContentForge AI API started successfully")
+    logger.info("Content Mate API started successfully")
 
     yield
 
     # Shutdown
-    logger.info("Shutting down ContentForge AI API...")
+    logger.info("Shutting down Content Mate API...")
     await mcp_manager.close()
-    logger.info("ContentForge AI API shutdown complete")
+    logger.info("Content Mate API shutdown complete")
 
 
 # Create FastAPI app
 app = FastAPI(
-    title="ContentForge AI",
+    title="Content Mate",
     description="Multi-agent AI content creation platform powered by LangGraph and MCP",
     version="0.1.0",
     lifespan=lifespan,
@@ -50,7 +50,7 @@ app = FastAPI(
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"] if settings.is_development else ["https://contentforge.ai"],
+    allow_origins=["*"] if settings.is_development else ["https://contentmate.ai"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -66,7 +66,7 @@ app.include_router(websocket.router, prefix="/api/v1", tags=["websocket"])
 async def root():
     """Root endpoint."""
     return {
-        "name": "ContentForge AI",
+        "name": "Content Mate",
         "version": "0.1.0",
         "status": "running",
         "docs": "/docs",

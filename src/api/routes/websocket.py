@@ -2,14 +2,11 @@
 
 import asyncio
 import json
-from typing import Any
 from datetime import datetime
+from typing import Any
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from loguru import logger
-
-from src.models.content import ContentRequest, ContentStatus
-
 
 router = APIRouter()
 
@@ -302,7 +299,7 @@ async def websocket_content_progress(websocket: WebSocket, content_id: str):
                 except json.JSONDecodeError:
                     pass
 
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 # Send keepalive ping
                 try:
                     await websocket.send_text(
@@ -350,7 +347,7 @@ async def websocket_broadcast(websocket: WebSocket):
         while True:
             try:
                 await asyncio.wait_for(websocket.receive_text(), timeout=30.0)
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 await websocket.send_text(
                     json.dumps({"type": "ping", "timestamp": datetime.utcnow().isoformat()})
                 )

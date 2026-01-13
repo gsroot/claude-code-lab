@@ -1,1 +1,1 @@
-"""ContentForge AI tests."""
+"""Content Mate tests."""

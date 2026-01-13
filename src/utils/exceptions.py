@@ -1,10 +1,10 @@
-"""Custom exceptions for ContentForge AI."""
+"""Custom exceptions for Content Mate."""
 
 from typing import Any
 
 
-class ContentForgeError(Exception):
-    """Base exception for ContentForge AI."""
+class ContentMateError(Exception):
+    """Base exception for Content Mate."""
 
     def __init__(self, message: str, details: dict[str, Any] | None = None):
         super().__init__(message)
@@ -17,7 +17,7 @@ class ContentForgeError(Exception):
         return self.message
 
 
-class AgentError(ContentForgeError):
+class AgentError(ContentMateError):
     """Exception raised when an agent fails to process."""
 
     def __init__(
@@ -66,7 +66,7 @@ class EditingError(AgentError):
         super().__init__(message, agent_name="Editor", phase="editing", details=details)
 
 
-class PipelineError(ContentForgeError):
+class PipelineError(ContentMateError):
     """Exception raised when the pipeline fails."""
 
     def __init__(
@@ -81,7 +81,7 @@ class PipelineError(ContentForgeError):
         self.failed_phase = failed_phase
 
 
-class LLMError(ContentForgeError):
+class LLMError(ContentMateError):
     """Exception raised when LLM API fails."""
 
     def __init__(
@@ -109,7 +109,7 @@ class RateLimitError(LLMError):
         self.retry_after = retry_after
 
 
-class ValidationError(ContentForgeError):
+class ValidationError(ContentMateError):
     """Exception raised when validation fails."""
 
     def __init__(
@@ -122,7 +122,7 @@ class ValidationError(ContentForgeError):
         self.field = field
 
 
-class MCPError(ContentForgeError):
+class MCPError(ContentMateError):
     """Exception raised when MCP server fails."""
 
     def __init__(

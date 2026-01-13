@@ -63,9 +63,7 @@ class ContentRepository:
         Returns:
             Content record or None
         """
-        result = await self.session.execute(
-            select(ContentDB).where(ContentDB.id == content_id)
-        )
+        result = await self.session.execute(select(ContentDB).where(ContentDB.id == content_id))
         return result.scalar_one_or_none()
 
     async def get_all(
@@ -118,9 +116,7 @@ class ContentRepository:
             values["error_message"] = error_message
 
         result = await self.session.execute(
-            update(ContentDB)
-            .where(ContentDB.id == content_id)
-            .values(**values)
+            update(ContentDB).where(ContentDB.id == content_id).values(**values)
         )
 
         return result.rowcount > 0
@@ -167,9 +163,7 @@ class ContentRepository:
             values["processing_time_seconds"] = processing_time
 
         result = await self.session.execute(
-            update(ContentDB)
-            .where(ContentDB.id == content_id)
-            .values(**values)
+            update(ContentDB).where(ContentDB.id == content_id).values(**values)
         )
 
         return result.rowcount > 0
@@ -183,9 +177,7 @@ class ContentRepository:
         Returns:
             True if deleted, False if not found
         """
-        result = await self.session.execute(
-            delete(ContentDB).where(ContentDB.id == content_id)
-        )
+        result = await self.session.execute(delete(ContentDB).where(ContentDB.id == content_id))
 
         return result.rowcount > 0
 

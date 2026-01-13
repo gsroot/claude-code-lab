@@ -1,21 +1,21 @@
 """Tests for content API endpoints."""
 
-import pytest
 from datetime import datetime
+from unittest.mock import patch
+
+import pytest
 from fastapi.testclient import TestClient
-from unittest.mock import patch, AsyncMock, MagicMock
 
 from src.api.main import app
 from src.api.routes.content import content_storage
 from src.models.content import (
+    ContentOutline,
+    ContentRequest,
     ContentResponse,
     ContentStatus,
-    ContentRequest,
     ContentType,
-    ContentOutline,
     ResearchResult,
 )
-from src.services.export_service import ExportFormat
 
 
 @pytest.fixture
@@ -81,7 +81,7 @@ class TestHealthEndpoints:
 
         data = response.json()
         assert "name" in data
-        assert data["name"] == "ContentForge AI"
+        assert data["name"] == "Content Mate"
         assert "version" in data
         assert data["status"] == "running"
 
@@ -255,9 +255,7 @@ class TestExportEndpoints:
         """Test exporting content as HTML."""
         content_storage[sample_completed_content.id] = sample_completed_content
 
-        response = client.get(
-            f"/api/v1/content/{sample_completed_content.id}/export?format=html"
-        )
+        response = client.get(f"/api/v1/content/{sample_completed_content.id}/export?format=html")
         assert response.status_code == 200
         assert response.headers["content-type"] == "text/html"
         assert ".html" in response.headers["content-disposition"]
@@ -270,13 +268,12 @@ class TestExportEndpoints:
         """Test exporting content as JSON."""
         content_storage[sample_completed_content.id] = sample_completed_content
 
-        response = client.get(
-            f"/api/v1/content/{sample_completed_content.id}/export?format=json"
-        )
+        response = client.get(f"/api/v1/content/{sample_completed_content.id}/export?format=json")
         assert response.status_code == 200
         assert response.headers["content-type"] == "application/json"
 
         import json
+
         data = json.loads(response.content)
         assert data["id"] == sample_completed_content.id
         assert data["content"] is not None
@@ -285,9 +282,7 @@ class TestExportEndpoints:
         """Test exporting content as plain text."""
         content_storage[sample_completed_content.id] = sample_completed_content
 
-        response = client.get(
-            f"/api/v1/content/{sample_completed_content.id}/export?format=txt"
-        )
+        response = client.get(f"/api/v1/content/{sample_completed_content.id}/export?format=txt")
         assert response.status_code == 200
         assert response.headers["content-type"] == "text/plain"
 

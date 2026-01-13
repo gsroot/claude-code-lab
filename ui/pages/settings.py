@@ -1,10 +1,10 @@
-"""Settings page for ContentForge AI."""
+"""Settings page for Content Mate."""
 
 import httpx
 import streamlit as st
 
 st.set_page_config(
-    page_title="Settings - ContentForge AI",
+    page_title="Settings - Content Mate",
     page_icon="⚙️",
     layout="wide",
 )
@@ -16,15 +16,17 @@ API_BASE_URL = "http://localhost:8000/api/v1"
 def main():
     """Settings page main function."""
     st.title("⚙️ Settings")
-    st.markdown("Configure your ContentForge AI experience")
+    st.markdown("Configure your Content Mate experience")
 
     # Tabs for different settings sections
-    tab1, tab2, tab3, tab4 = st.tabs([
-        "🔌 API Connection",
-        "🤖 Generation Defaults",
-        "🎨 Appearance",
-        "ℹ️ About",
-    ])
+    tab1, tab2, tab3, tab4 = st.tabs(
+        [
+            "🔌 API Connection",
+            "🤖 Generation Defaults",
+            "🎨 Appearance",
+            "ℹ️ About",
+        ]
+    )
 
     with tab1:
         api_settings()
@@ -52,7 +54,7 @@ def api_settings():
         api_url = st.text_input(
             "API Base URL",
             value=API_BASE_URL.replace("/api/v1", ""),
-            help="The base URL of your ContentForge API server",
+            help="The base URL of your ContentMate API server",
         )
 
     with col2:
@@ -98,7 +100,7 @@ def api_settings():
     st.subheader("WebSocket Connection")
     ws_url = st.text_input(
         "WebSocket URL",
-        value=f"ws://localhost:8000/api/v1",
+        value="ws://localhost:8000/api/v1",
         help="WebSocket URL for real-time progress updates",
     )
     st.info("WebSocket connection is used for real-time generation progress updates.")
@@ -249,17 +251,17 @@ def appearance_settings():
 
 def about_section():
     """About section."""
-    st.header("ℹ️ About ContentForge AI")
+    st.header("ℹ️ About Content Mate")
 
     col1, col2 = st.columns([2, 1])
 
     with col1:
         st.markdown("""
-        ### 🚀 ContentForge AI
+        ### 🚀 Content Mate
 
         **Multi-Agent AI Content Creation Platform**
 
-        ContentForge AI uses a pipeline of specialized AI agents to create
+        Content Mate uses a pipeline of specialized AI agents to create
         high-quality content:
 
         1. **🔍 Researcher Agent** - Gathers facts and information
@@ -321,9 +323,9 @@ def about_section():
 
     st.markdown("### 📄 License")
     st.markdown("""
-    ContentForge AI is released under the **MIT License**.
+    Content Mate is released under the **MIT License**.
 
-    Copyright © 2025 ContentForge Team
+    Copyright © 2025 ContentMate Team
     """)
 
 

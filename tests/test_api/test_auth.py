@@ -1,16 +1,15 @@
 """Tests for authentication routes and service."""
 
-import pytest
 from datetime import datetime, timedelta
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
+
+import pytest
 
 from src.models.user import (
+    Token,
     UserCreate,
-    UserLogin,
     UserResponse,
     UserRole,
-    Token,
-    TokenPayload,
 )
 from src.services.auth_service import AuthService
 

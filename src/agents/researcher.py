@@ -57,10 +57,10 @@ Provide your research findings in a structured format with:
 
 TOPIC: {request.topic}
 CONTENT TYPE: {request.content_type}
-TARGET AUDIENCE: {request.target_audience or 'General audience'}
+TARGET AUDIENCE: {request.target_audience or "General audience"}
 LANGUAGE: {request.language}
 
-Additional context: {request.additional_instructions or 'None provided'}
+Additional context: {request.additional_instructions or "None provided"}
 
 Please gather:
 1. At least 5 key facts about this topic
@@ -69,7 +69,7 @@ Please gather:
 4. What competitors/others are writing about this
 5. Any unique angles worth exploring
 
-Focus on information that would resonate with {request.target_audience or 'the general audience'}."""
+Focus on information that would resonate with {request.target_audience or "the general audience"}."""
 
         messages = [HumanMessage(content=research_prompt)]
         response = await self.invoke(messages)

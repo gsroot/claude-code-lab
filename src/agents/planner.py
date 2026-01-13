@@ -126,7 +126,7 @@ You must respond with a valid JSON object in this exact format:
             if research.quotes:
                 prompt_parts.append("\nExpert Quotes available:")
                 for quote in research.quotes[:3]:
-                    prompt_parts.append(f"  \"{quote}\"")
+                    prompt_parts.append(f'  "{quote}"')
 
             if research.competitor_insights:
                 prompt_parts.append("\nCompetitor Insights:")
@@ -137,7 +137,9 @@ You must respond with a valid JSON object in this exact format:
             prompt_parts.append(f"\nADDITIONAL REQUIREMENTS: {request.additional_instructions}")
 
         prompt_parts.append("\n--- INSTRUCTIONS ---")
-        prompt_parts.append("Based on the above information, create a comprehensive content outline.")
+        prompt_parts.append(
+            "Based on the above information, create a comprehensive content outline."
+        )
         prompt_parts.append("Respond ONLY with a valid JSON object in the specified format.")
         prompt_parts.append("Do not include any text before or after the JSON.")
 
@@ -158,7 +160,7 @@ You must respond with a valid JSON object in this exact format:
             data = json.loads(content)
         except json.JSONDecodeError:
             # Try to find JSON in the response
-            json_match = re.search(r'\{[\s\S]*\}', content)
+            json_match = re.search(r"\{[\s\S]*\}", content)
             if json_match:
                 try:
                     data = json.loads(json_match.group())
@@ -210,11 +212,7 @@ You must respond with a valid JSON object in this exact format:
                 header = line.lstrip("#").strip()
                 if current_section:
                     sections.append(current_section)
-                current_section = {
-                    "header": header,
-                    "purpose": "",
-                    "points": []
-                }
+                current_section = {"header": header, "purpose": "", "points": []}
             elif line.startswith("-") or line.startswith("•") or line.startswith("*"):
                 point = line.lstrip("-•* ").strip()
                 if current_section:
@@ -229,18 +227,18 @@ You must respond with a valid JSON object in this exact format:
                 {
                     "header": "Introduction",
                     "purpose": "Set the context",
-                    "points": ["Introduce the topic", "Establish relevance"]
+                    "points": ["Introduce the topic", "Establish relevance"],
                 },
                 {
                     "header": "Main Content",
                     "purpose": "Core information",
-                    "points": ["Key point 1", "Key point 2", "Key point 3"]
+                    "points": ["Key point 1", "Key point 2", "Key point 3"],
                 },
                 {
                     "header": "Conclusion",
                     "purpose": "Wrap up",
-                    "points": ["Summary", "Call to action"]
-                }
+                    "points": ["Summary", "Call to action"],
+                },
             ]
 
         return ContentOutline(

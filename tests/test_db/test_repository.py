@@ -1,19 +1,19 @@
 """Tests for content repository."""
 
-import pytest
 from datetime import datetime
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
+import pytest
+
+from src.db.models import ContentDB
+from src.db.repository import ContentRepository
 from src.models.content import (
+    ContentOutline,
     ContentRequest,
     ContentResponse,
     ContentStatus,
     ContentType,
-    ContentOutline,
-    ResearchResult,
 )
-from src.db.repository import ContentRepository
-from src.db.models import ContentDB
 
 
 @pytest.fixture

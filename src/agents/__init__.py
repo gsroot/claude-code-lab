@@ -1,4 +1,4 @@
-"""ContentForge AI Agents."""
+"""Content Mate Agents."""
 
 from src.agents.base import BaseAgent
 from src.agents.editor import EditorAgent

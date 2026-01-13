@@ -73,14 +73,14 @@ class AuthService:
         if expires_delta:
             expire = datetime.utcnow() + expires_delta
         else:
-            expire = datetime.utcnow() + timedelta(
-                minutes=settings.access_token_expire_minutes
-            )
+            expire = datetime.utcnow() + timedelta(minutes=settings.access_token_expire_minutes)
 
-        to_encode.update({
-            "exp": expire,
-            "iat": datetime.utcnow(),
-        })
+        to_encode.update(
+            {
+                "exp": expire,
+                "iat": datetime.utcnow(),
+            }
+        )
 
         return jwt.encode(
             to_encode,
@@ -143,9 +143,7 @@ class AuthService:
         Returns:
             User record or None
         """
-        result = await self.session.execute(
-            select(UserDB).where(UserDB.email == email)
-        )
+        result = await self.session.execute(select(UserDB).where(UserDB.email == email))
         return result.scalar_one_or_none()
 
     async def get_user_by_id(self, user_id: str) -> UserDB | None:
@@ -157,9 +155,7 @@ class AuthService:
         Returns:
             User record or None
         """
-        result = await self.session.execute(
-            select(UserDB).where(UserDB.id == user_id)
-        )
+        result = await self.session.execute(select(UserDB).where(UserDB.id == user_id))
         return result.scalar_one_or_none()
 
     async def create_user(self, user_data: UserCreate) -> UserDB:

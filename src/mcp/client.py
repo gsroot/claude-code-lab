@@ -1,10 +1,9 @@
 """MCP Client for connecting to MCP servers and loading tools."""
 
-import asyncio
 from typing import Any
 
-from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_core.tools import BaseTool
+from langchain_mcp_adapters.client import MultiServerMCPClient
 from loguru import logger
 
 from src.utils.config import settings

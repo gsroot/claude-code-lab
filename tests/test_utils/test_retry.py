@@ -1,17 +1,15 @@
 """Tests for retry utilities."""
 
+
 import pytest
-import asyncio
-from unittest.mock import AsyncMock, MagicMock
 
 from src.utils.retry import (
-    retry_async,
-    with_retry,
-    calculate_delay,
+    LLM_RETRY_CONFIG,
     RetryConfig,
     RetryError,
-    DEFAULT_RETRY_CONFIG,
-    LLM_RETRY_CONFIG,
+    calculate_delay,
+    retry_async,
+    with_retry,
 )
 
 
@@ -80,6 +78,7 @@ class TestRetryAsync:
     @pytest.mark.asyncio
     async def test_success_on_first_try(self):
         """Test successful execution on first try."""
+
         async def success_func():
             return "success"
 
@@ -107,6 +106,7 @@ class TestRetryAsync:
     @pytest.mark.asyncio
     async def test_failure_after_max_attempts(self):
         """Test failure after exhausting all attempts."""
+
         async def always_fail():
             raise ValueError("Always fails")
 
@@ -144,6 +144,7 @@ class TestRetryAsync:
     @pytest.mark.asyncio
     async def test_with_arguments(self):
         """Test retry with function arguments."""
+
         async def add(a, b):
             return a + b
 
@@ -153,6 +154,7 @@ class TestRetryAsync:
     @pytest.mark.asyncio
     async def test_with_kwargs(self):
         """Test retry with keyword arguments."""
+
         async def greet(name, greeting="Hello"):
             return f"{greeting}, {name}!"
 
@@ -166,6 +168,7 @@ class TestWithRetryDecorator:
     @pytest.mark.asyncio
     async def test_decorator_success(self):
         """Test decorator on successful function."""
+
         @with_retry()
         async def success_func():
             return "decorated success"
@@ -193,6 +196,7 @@ class TestWithRetryDecorator:
     @pytest.mark.asyncio
     async def test_decorator_preserves_function_name(self):
         """Test decorator preserves function metadata."""
+
         @with_retry()
         async def my_function():
             """My docstring."""

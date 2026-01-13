@@ -1,17 +1,18 @@
 """Tests for the content generation pipeline."""
 
-import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
 from datetime import datetime
+from unittest.mock import AsyncMock, patch
 
-from src.workflows.content_pipeline import ContentPipeline, ContentState, generate_content
+import pytest
+
 from src.models.content import (
-    ContentRequest,
-    ContentType,
-    ContentStatus,
-    ResearchResult,
     ContentOutline,
+    ContentRequest,
+    ContentStatus,
+    ContentType,
+    ResearchResult,
 )
+from src.workflows.content_pipeline import ContentPipeline, ContentState
 
 
 @pytest.fixture
@@ -112,19 +113,23 @@ class TestPipelineNodes:
     @pytest.fixture
     def pipeline(self):
         """Create pipeline with mocked agents."""
-        with patch("src.workflows.content_pipeline.ResearcherAgent") as mock_r, \
-             patch("src.workflows.content_pipeline.PlannerAgent") as mock_p, \
-             patch("src.workflows.content_pipeline.WriterAgent") as mock_w, \
-             patch("src.workflows.content_pipeline.EditorAgent") as mock_e:
+        with (
+            patch("src.workflows.content_pipeline.ResearcherAgent") as mock_r,
+            patch("src.workflows.content_pipeline.PlannerAgent") as mock_p,
+            patch("src.workflows.content_pipeline.WriterAgent") as mock_w,
+            patch("src.workflows.content_pipeline.EditorAgent") as mock_e,
+        ):
             return ContentPipeline()
 
     @pytest.mark.asyncio
     async def test_research_node_success(self, pipeline, sample_request, mock_research):
         """Test research node processes successfully."""
-        pipeline.researcher.process = AsyncMock(return_value={
-            "research": mock_research,
-            "messages": [],
-        })
+        pipeline.researcher.process = AsyncMock(
+            return_value={
+                "research": mock_research,
+                "messages": [],
+            }
+        )
 
         state: ContentState = {
             "request": sample_request,
@@ -170,10 +175,12 @@ class TestPipelineNodes:
     @pytest.mark.asyncio
     async def test_plan_node_success(self, pipeline, sample_request, mock_research, mock_outline):
         """Test plan node processes successfully."""
-        pipeline.planner.process = AsyncMock(return_value={
-            "outline": mock_outline,
-            "messages": [],
-        })
+        pipeline.planner.process = AsyncMock(
+            return_value={
+                "outline": mock_outline,
+                "messages": [],
+            }
+        )
 
         state: ContentState = {
             "request": sample_request,
@@ -196,10 +203,12 @@ class TestPipelineNodes:
     @pytest.mark.asyncio
     async def test_write_node_success(self, pipeline, sample_request, mock_research, mock_outline):
         """Test write node processes successfully."""
-        pipeline.writer.process = AsyncMock(return_value={
-            "draft_content": "This is the draft content...",
-            "messages": [],
-        })
+        pipeline.writer.process = AsyncMock(
+            return_value={
+                "draft_content": "This is the draft content...",
+                "messages": [],
+            }
+        )
 
         state: ContentState = {
             "request": sample_request,
@@ -222,10 +231,12 @@ class TestPipelineNodes:
     @pytest.mark.asyncio
     async def test_edit_node_success(self, pipeline, sample_request):
         """Test edit node processes successfully."""
-        pipeline.editor.process = AsyncMock(return_value={
-            "content": "This is the final edited content.",
-            "messages": [],
-        })
+        pipeline.editor.process = AsyncMock(
+            return_value={
+                "content": "This is the final edited content.",
+                "messages": [],
+            }
+        )
 
         state: ContentState = {
             "request": sample_request,
@@ -272,22 +283,26 @@ class TestPipelineGenerate:
     @pytest.fixture
     def pipeline(self):
         """Create pipeline with mocked agents."""
-        with patch("src.workflows.content_pipeline.ResearcherAgent"), \
-             patch("src.workflows.content_pipeline.PlannerAgent"), \
-             patch("src.workflows.content_pipeline.WriterAgent"), \
-             patch("src.workflows.content_pipeline.EditorAgent"):
+        with (
+            patch("src.workflows.content_pipeline.ResearcherAgent"),
+            patch("src.workflows.content_pipeline.PlannerAgent"),
+            patch("src.workflows.content_pipeline.WriterAgent"),
+            patch("src.workflows.content_pipeline.EditorAgent"),
+        ):
             return ContentPipeline()
 
     @pytest.mark.asyncio
     async def test_generate_returns_content_response(self, pipeline, sample_request):
         """Test generate returns a ContentResponse."""
         # Mock the graph invoke
-        pipeline.graph.ainvoke = AsyncMock(return_value={
-            "status": ContentStatus.COMPLETED,
-            "content": "Generated content here",
-            "research": None,
-            "outline": None,
-        })
+        pipeline.graph.ainvoke = AsyncMock(
+            return_value={
+                "status": ContentStatus.COMPLETED,
+                "content": "Generated content here",
+                "research": None,
+                "outline": None,
+            }
+        )
 
         response = await pipeline.generate(sample_request)
 

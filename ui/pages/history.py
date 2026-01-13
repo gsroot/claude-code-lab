@@ -1,13 +1,14 @@
 """History page - View and manage generated content."""
 
-import streamlit as st
-import requests
 from datetime import datetime
 from typing import Any
 
+import requests
+import streamlit as st
+
 # Page configuration
 st.set_page_config(
-    page_title="History - ContentForge AI",
+    page_title="History - Content Mate",
     page_icon="📚",
     layout="wide",
 )
@@ -242,7 +243,8 @@ def main():
             # Filter by search query
             if search_query:
                 items = [
-                    item for item in items
+                    item
+                    for item in items
                     if search_query.lower() in item.get("request", {}).get("topic", "").lower()
                 ]
 
@@ -274,8 +276,7 @@ def main():
                         with card_col2:
                             color = get_status_color(status)
                             st.markdown(
-                                f"<span style='color:{color};font-size:0.8em;'>"
-                                f"●</span>",
+                                f"<span style='color:{color};font-size:0.8em;'>●</span>",
                                 unsafe_allow_html=True,
                             )
 
@@ -412,7 +413,9 @@ def main():
                             st.markdown("**Sources:**")
                             for source in sources:
                                 if isinstance(source, dict):
-                                    st.markdown(f"- [{source.get('title', 'Source')}]({source.get('url', '#')})")
+                                    st.markdown(
+                                        f"- [{source.get('title', 'Source')}]({source.get('url', '#')})"
+                                    )
                                 else:
                                     st.markdown(f"- {source}")
                     else:
@@ -470,7 +473,7 @@ def main():
     # Footer
     st.markdown("---")
     st.markdown(
-        "<center style='color:gray;'>ContentForge AI - Content History</center>",
+        "<center style='color:gray;'>Content Mate - Content History</center>",
         unsafe_allow_html=True,
     )
 

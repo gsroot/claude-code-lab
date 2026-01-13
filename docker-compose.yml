@@ -1,4 +1,4 @@
-# ContentForge AI - Docker Compose Configuration
+# Content Mate - Docker Compose Configuration
 # Usage: docker compose up -d
 
 version: "3.9"
@@ -9,13 +9,13 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.api
-    container_name: contentforge-api
+    container_name: contentmate-api
     ports:
       - "8000:8000"
     environment:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
-      - DATABASE_URL=postgresql://contentforge:contentforge@postgres:5432/contentforge
+      - DATABASE_URL=postgresql://contentmate:contentmate@postgres:5432/contentmate
       - REDIS_URL=redis://redis:6379/0
       - LOG_LEVEL=INFO
       - ENVIRONMENT=production
@@ -25,10 +25,16 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - contentforge-network
+      - contentmate-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8000/health')"]
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import httpx; httpx.get('http://localhost:8000/health')",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -39,7 +45,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.ui
-    container_name: contentforge-ui
+    container_name: contentmate-ui
     ports:
       - "8501:8501"
     environment:
@@ -49,27 +55,27 @@ services:
     depends_on:
       - api
     networks:
-      - contentforge-network
+      - contentmate-network
     restart: unless-stopped
 
   # PostgreSQL Database
   postgres:
     image: postgres:16-alpine
-    container_name: contentforge-postgres
+    container_name: contentmate-postgres
     environment:
-      - POSTGRES_USER=contentforge
-      - POSTGRES_PASSWORD=contentforge
-      - POSTGRES_DB=contentforge
+      - POSTGRES_USER=contentmate
+      - POSTGRES_PASSWORD=contentmate
+      - POSTGRES_DB=contentmate
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     ports:
       - "5432:5432"
     networks:
-      - contentforge-network
+      - contentmate-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U contentforge -d contentforge"]
+      test: ["CMD-SHELL", "pg_isready -U contentmate -d contentmate"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -77,14 +83,14 @@ services:
   # Redis Cache
   redis:
     image: redis:7-alpine
-    container_name: contentforge-redis
+    container_name: contentmate-redis
     command: redis-server --appendonly yes
     volumes:
       - redis_data:/data
     ports:
       - "6379:6379"
     networks:
-      - contentforge-network
+      - contentmate-network
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -93,7 +99,7 @@ services:
       retries: 5
 
 networks:
-  contentforge-network:
+  contentmate-network:
     driver: bridge
 
 volumes:

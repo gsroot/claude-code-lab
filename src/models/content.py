@@ -37,7 +37,9 @@ class ContentRequest(BaseModel):
     topic: str = Field(..., min_length=5, max_length=500, description="Content topic or idea")
     content_type: ContentType = Field(default=ContentType.BLOG_POST)
     target_audience: str | None = Field(default=None, description="Target audience description")
-    tone: str = Field(default="professional", description="Content tone (professional, casual, etc.)")
+    tone: str = Field(
+        default="professional", description="Content tone (professional, casual, etc.)"
+    )
     language: str = Field(default="en", description="Target language code")
     word_count: int = Field(default=1500, ge=100, le=10000, description="Target word count")
     keywords: list[str] = Field(default_factory=list, description="SEO keywords to include")

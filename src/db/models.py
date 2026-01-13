@@ -1,4 +1,4 @@
-"""SQLAlchemy ORM models for ContentForge AI."""
+"""SQLAlchemy ORM models for Content Mate."""
 
 from datetime import datetime
 from typing import Any
@@ -6,9 +6,7 @@ from uuid import uuid4
 
 from sqlalchemy import (
     Boolean,
-    Column,
     DateTime,
-    Enum,
     Float,
     ForeignKey,
     Index,

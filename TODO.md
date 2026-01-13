@@ -1,4 +1,4 @@
-# 📋 ContentForge AI - TODO List
+# 📋 Content Mate - TODO List
 
 > 마지막 업데이트: 2025-12-10 (JWT 인증, 사용자 모델, 히스토리 페이지 완료)
 
@@ -8,52 +8,52 @@
 
 ### ✅ 완료된 항목
 
-| 카테고리 | 항목 | 파일 |
-|----------|------|------|
-| 프로젝트 설정 | pyproject.toml (uv) | `pyproject.toml` |
-| 프로젝트 설정 | 환경 변수 템플릿 | `.env.example` |
-| 프로젝트 설정 | 설정 관리 | `src/utils/config.py` |
-| 에이전트 | BaseAgent 클래스 | `src/agents/base.py` |
-| 에이전트 | ResearcherAgent | `src/agents/researcher.py` |
-| 에이전트 | WriterAgent | `src/agents/writer.py` |
-| 에이전트 | EditorAgent | `src/agents/editor.py` |
-| 에이전트 | PlannerAgent | `src/agents/planner.py` |
-| 워크플로우 | ContentPipeline (LangGraph) | `src/workflows/content_pipeline.py` |
-| MCP | MCPToolManager 클라이언트 | `src/mcp/client.py` |
-| API | FastAPI 앱 | `src/api/main.py` |
-| API | 콘텐츠 생성 라우트 | `src/api/routes/content.py` |
-| 모델 | Content Pydantic 모델 | `src/models/content.py` |
-| UI | Streamlit 기본 앱 | `ui/app.py` |
-| 테스트 | 기본 테스트 구조 | `tests/` |
-| 문서 | README.md (한국어) | `README.md` |
-| 문서 | 서비스 기획서 | `SERVICE_PLAN.md` |
-| 유틸리티 | 에러 처리 시스템 | `src/utils/exceptions.py` |
-| 유틸리티 | 재시도 로직 | `src/utils/retry.py` |
-| 유틸리티 | 로깅 시스템 | `src/utils/logging.py` |
-| 테스트 | 재시도 유틸 테스트 | `tests/test_utils/test_retry.py` |
-| API | WebSocket 실시간 진행 | `src/api/routes/websocket.py` |
-| 서비스 | 콘텐츠 내보내기 | `src/services/export_service.py` |
-| 테스트 | API E2E 테스트 | `tests/test_api/test_content.py` |
-| 테스트 | 내보내기 서비스 테스트 | `tests/test_services/test_export.py` |
-| UI | 실시간 진행 표시 | `ui/app.py` (업데이트) |
-| UI | 설정 페이지 | `ui/pages/settings.py` |
-| 인프라 | Docker API 설정 | `docker/Dockerfile.api` |
-| 인프라 | Docker UI 설정 | `docker/Dockerfile.ui` |
-| 인프라 | Docker Compose | `docker-compose.yml` |
-| 인프라 | DB 초기화 스크립트 | `docker/init.sql` |
-| 데이터베이스 | PostgreSQL 연동 | `src/db/database.py` |
-| 데이터베이스 | SQLAlchemy 모델 | `src/db/models.py` |
-| 데이터베이스 | 콘텐츠 Repository | `src/db/repository.py` |
-| 데이터베이스 | Redis 캐시 | `src/db/cache.py` |
-| 인프라 | CI 파이프라인 | `.github/workflows/ci.yml` |
-| 인프라 | CD 파이프라인 | `.github/workflows/cd.yml` |
-| 테스트 | DB Repository 테스트 | `tests/test_db/test_repository.py` |
-| 테스트 | 캐시 테스트 | `tests/test_db/test_cache.py` |
-| 인증 | JWT 인증 구현 | `src/api/routes/auth.py` |
-| 인증 | 인증 서비스 | `src/services/auth_service.py` |
-| 모델 | 사용자 Pydantic 모델 | `src/models/user.py` |
-| UI | 히스토리 페이지 | `ui/pages/history.py` |
-| 테스트 | 인증 테스트 | `tests/test_api/test_auth.py` |
+| 카테고리      | 항목                        | 파일                                 |
+| ------------- | --------------------------- | ------------------------------------ |
+| 프로젝트 설정 | pyproject.toml (uv)         | `pyproject.toml`                     |
+| 프로젝트 설정 | 환경 변수 템플릿            | `.env.example`                       |
+| 프로젝트 설정 | 설정 관리                   | `src/utils/config.py`                |
+| 에이전트      | BaseAgent 클래스            | `src/agents/base.py`                 |
+| 에이전트      | ResearcherAgent             | `src/agents/researcher.py`           |
+| 에이전트      | WriterAgent                 | `src/agents/writer.py`               |
+| 에이전트      | EditorAgent                 | `src/agents/editor.py`               |
+| 에이전트      | PlannerAgent                | `src/agents/planner.py`              |
+| 워크플로우    | ContentPipeline (LangGraph) | `src/workflows/content_pipeline.py`  |
+| MCP           | MCPToolManager 클라이언트   | `src/mcp/client.py`                  |
+| API           | FastAPI 앱                  | `src/api/main.py`                    |
+| API           | 콘텐츠 생성 라우트          | `src/api/routes/content.py`          |
+| 모델          | Content Pydantic 모델       | `src/models/content.py`              |
+| UI            | Streamlit 기본 앱           | `ui/app.py`                          |
+| 테스트        | 기본 테스트 구조            | `tests/`                             |
+| 문서          | README.md (한국어)          | `README.md`                          |
+| 문서          | 서비스 기획서               | `SERVICE_PLAN.md`                    |
+| 유틸리티      | 에러 처리 시스템            | `src/utils/exceptions.py`            |
+| 유틸리티      | 재시도 로직                 | `src/utils/retry.py`                 |
+| 유틸리티      | 로깅 시스템                 | `src/utils/logging.py`               |
+| 테스트        | 재시도 유틸 테스트          | `tests/test_utils/test_retry.py`     |
+| API           | WebSocket 실시간 진행       | `src/api/routes/websocket.py`        |
+| 서비스        | 콘텐츠 내보내기             | `src/services/export_service.py`     |
+| 테스트        | API E2E 테스트              | `tests/test_api/test_content.py`     |
+| 테스트        | 내보내기 서비스 테스트      | `tests/test_services/test_export.py` |
+| UI            | 실시간 진행 표시            | `ui/app.py` (업데이트)               |
+| UI            | 설정 페이지                 | `ui/pages/settings.py`               |
+| 인프라        | Docker API 설정             | `docker/Dockerfile.api`              |
+| 인프라        | Docker UI 설정              | `docker/Dockerfile.ui`               |
+| 인프라        | Docker Compose              | `docker-compose.yml`                 |
+| 인프라        | DB 초기화 스크립트          | `docker/init.sql`                    |
+| 데이터베이스  | PostgreSQL 연동             | `src/db/database.py`                 |
+| 데이터베이스  | SQLAlchemy 모델             | `src/db/models.py`                   |
+| 데이터베이스  | 콘텐츠 Repository           | `src/db/repository.py`               |
+| 데이터베이스  | Redis 캐시                  | `src/db/cache.py`                    |
+| 인프라        | CI 파이프라인               | `.github/workflows/ci.yml`           |
+| 인프라        | CD 파이프라인               | `.github/workflows/cd.yml`           |
+| 테스트        | DB Repository 테스트        | `tests/test_db/test_repository.py`   |
+| 테스트        | 캐시 테스트                 | `tests/test_db/test_cache.py`        |
+| 인증          | JWT 인증 구현               | `src/api/routes/auth.py`             |
+| 인증          | 인증 서비스                 | `src/services/auth_service.py`       |
+| 모델          | 사용자 Pydantic 모델        | `src/models/user.py`                 |
+| UI            | 히스토리 페이지             | `ui/pages/history.py`                |
+| 테스트        | 인증 테스트                 | `tests/test_api/test_auth.py`        |
 
 ### 📈 진행률: **Phase 1 MVP - 100% 완료** 🎉
 
@@ -64,6 +64,7 @@
 ### Week 1-2: 핵심 인프라 (현재 단계)
 
 #### 에이전트 구현
+
 - [x] BaseAgent 클래스 구현
 - [x] ResearcherAgent 구현
 - [x] WriterAgent 구현
@@ -74,6 +75,7 @@
   - JSON 기반 구조화된 아웃라인 생성
 
 #### MCP 연동
+
 - [x] MCP 클라이언트 기본 구조
 - [ ] **Fetch MCP 서버 실제 연동 테스트**
 - [ ] **Memory MCP 서버 연동**
@@ -82,12 +84,13 @@
   - 웹 검색 기능 활성화
 
 #### 워크플로우 개선
+
 - [x] 기본 파이프라인 (Research → Write → Edit)
 - [x] **Planner 노드 추가** (Research → Plan → Write → Edit) ✅
   - 파이프라인: Research → Plan → Write → Edit → Finalize
 - [x] **에러 처리 강화** ✅ 완료
   - 파일: `src/utils/exceptions.py`
-  - 커스텀 예외 계층: ContentForgeError, AgentError, LLMError 등
+  - 커스텀 예외 계층: ContentMateError, AgentError, LLMError 등
   - 각 에이전트별 전용 에러 클래스
 - [x] **재시도 로직 추가** ✅ 완료
   - 파일: `src/utils/retry.py`
@@ -98,6 +101,7 @@
 ### Week 3-4: MVP 기능
 
 #### API 확장
+
 - [x] 콘텐츠 생성 엔드포인트
 - [x] 비동기 생성 엔드포인트
 - [x] **WebSocket 실시간 진행 상황 전송** ✅ 완료
@@ -111,6 +115,7 @@
   - /content/{id}/export 엔드포인트 추가
 
 #### 데이터베이스 연동
+
 - [x] **PostgreSQL 연동** ✅ 완료
   - 파일: `src/db/database.py`
   - 파일: `src/db/models.py` (SQLAlchemy ORM)
@@ -126,6 +131,7 @@
   - 테스트: `tests/test_db/`
 
 #### 사용자 인증
+
 - [x] **JWT 인증 구현** ✅ 완료
   - 파일: `src/api/routes/auth.py`
   - 파일: `src/services/auth_service.py`
@@ -141,6 +147,7 @@
   - 비밀번호 변경 기능
 
 #### UI 개선
+
 - [x] Streamlit 기본 UI
 - [x] **실시간 생성 진행 표시** ✅ 완료
   - 파일: `ui/app.py` (업데이트)
@@ -162,6 +169,7 @@
   - 시스템 정보 및 도움말
 
 #### 테스트
+
 - [x] 기본 테스트 구조
 - [x] **에이전트 단위 테스트 확장** ✅
   - PlannerAgent 테스트 추가 (`tests/test_agents/test_planner.py`)
@@ -184,12 +192,15 @@
 ### Week 5-8: 전체 에이전트 구현
 
 #### 추가 에이전트
+
 - [ ] **TrendAnalystAgent**
+
   - 파일: `src/agents/trend_analyst.py`
   - 기능: 실시간 트렌드 분석, 인기 키워드 추출
   - MCP: 웹 검색, 소셜 미디어 API
 
 - [ ] **SEOOptimizerAgent**
+
   - 파일: `src/agents/seo_optimizer.py`
   - 기능: 키워드 밀도 최적화, 메타 태그 생성
   - 출력: SEOMetadata 모델
@@ -200,7 +211,9 @@
   - 연동: DALL-E, Stable Diffusion API
 
 #### 커스텀 MCP 서버
+
 - [ ] **Trend MCP 서버**
+
   - 파일: `src/mcp/servers/trend_server.py`
   - 기능: Google Trends, Twitter API 래핑
 
@@ -209,6 +222,7 @@
   - 기능: 키워드 분석, 경쟁사 분석
 
 #### 에이전트 협업 로직
+
 - [ ] **병렬 실행 구현**
   - Research + Trend Analysis 동시 실행
 - [ ] **조건부 분기**
@@ -219,6 +233,7 @@
 ### Week 9-12: 제품 완성도
 
 #### 결제 시스템
+
 - [ ] **Stripe 연동**
   - 파일: `src/api/routes/billing.py`
   - 파일: `src/services/billing_service.py`
@@ -227,17 +242,20 @@
 - [ ] **인보이스 생성**
 
 #### 대시보드 & 분석
+
 - [ ] **사용 통계 대시보드**
 - [ ] **콘텐츠 성과 분석**
 - [ ] **비용 추적**
 
 #### 템플릿 시스템
+
 - [ ] **템플릿 모델**
   - 파일: `src/models/template.py`
 - [ ] **업종별 템플릿**
 - [ ] **사용자 커스텀 템플릿**
 
 #### 팀 협업
+
 - [ ] **팀/워크스페이스 모델**
 - [ ] **멤버 초대/권한 관리**
 - [ ] **공유 콘텐츠 라이브러리**
@@ -249,6 +267,7 @@
 ### Week 13-14: 런칭 준비
 
 #### 인프라
+
 - [x] **Docker 설정** ✅ 완료
   - 파일: `docker/Dockerfile.api` (API 서버)
   - 파일: `docker/Dockerfile.ui` (Streamlit UI)
@@ -267,17 +286,20 @@
   - AWS/GCP/Vercel
 
 #### 성능 최적화
+
 - [ ] **응답 시간 최적화**
 - [ ] **동시 요청 처리**
 - [ ] **LLM 비용 최적화**
 
 #### 보안
+
 - [ ] **보안 감사**
 - [ ] **Rate Limiting 강화**
 - [ ] **입력 검증 강화**
 - [ ] **OWASP Top 10 점검**
 
 #### 문서화
+
 - [ ] **API 문서 완성**
 - [ ] **사용자 가이드**
 - [ ] **개발자 문서**
@@ -285,11 +307,13 @@
 ### Week 15-16: 퍼블릭 런칭
 
 #### 마케팅
+
 - [ ] **랜딩 페이지**
 - [ ] **ProductHunt 런칭**
 - [ ] **프레스 릴리스**
 
 #### 운영
+
 - [ ] **모니터링 설정**
   - Sentry, DataDog 등
 - [ ] **알림 시스템**
@@ -300,6 +324,7 @@
 ## 📁 생성 필요 파일 목록
 
 ### 에이전트
+
 ```
 src/agents/
 ├── planner.py          # Week 1-2 ✅ 완료
@@ -309,6 +334,7 @@ src/agents/
 ```
 
 ### API
+
 ```
 src/api/routes/
 ├── auth.py             # Week 3-4 ✅ 완료
@@ -317,6 +343,7 @@ src/api/routes/
 ```
 
 ### 모델
+
 ```
 src/models/
 ├── user.py             # Week 3-4 ✅ 완료
@@ -325,6 +352,7 @@ src/models/
 ```
 
 ### 서비스
+
 ```
 src/services/
 ├── export_service.py   # Week 3-4 ✅ 완료
@@ -335,6 +363,7 @@ src/services/
 ```
 
 ### MCP 서버
+
 ```
 src/mcp/servers/
 ├── trend_server.py     # Week 5-8
@@ -342,6 +371,7 @@ src/mcp/servers/
 ```
 
 ### 데이터베이스
+
 ```
 src/db/
 ├── __init__.py         # Week 3-4 ✅ 완료
@@ -358,6 +388,7 @@ tests/test_db/
 ```
 
 ### 인프라
+
 ```
 docker/
 ├── Dockerfile.api      # Week 13-14 ✅ 완료
@@ -374,6 +405,7 @@ docker-compose.yml      # Week 13-14 ✅ 완료
 ```
 
 ### UI 페이지
+
 ```
 ui/pages/
 ├── settings.py         # Week 3-4 ✅ 완료
@@ -386,12 +418,14 @@ ui/pages/
 ## 🎯 이번 주 우선순위 (즉시 실행)
 
 ### 높음 (High)
+
 1. [x] ~~PlannerAgent 구현~~ ✅ 완료
 2. [ ] MCP Fetch 서버 실제 연동 테스트
 3. [x] ~~워크플로우에 Planner 노드 추가~~ ✅ 완료
 4. [x] ~~에이전트 테스트 확장~~ ✅ 완료
 
 ### 중간 (Medium)
+
 5. [x] ~~WebSocket 실시간 진행 상황~~ ✅ 완료
 6. [x] ~~PostgreSQL 연동~~ ✅ 완료
 7. [x] ~~UI 실시간 진행 표시~~ ✅ 완료
@@ -404,6 +438,7 @@ ui/pages/
 14. [x] ~~히스토리 페이지 개선~~ ✅ 완료
 
 ### 낮음 (Low)
+
 15. [ ] 문서 개선
 16. [ ] 코드 리팩토링
 17. [x] ~~로깅 시스템 개선~~ ✅ 완료
@@ -416,15 +451,17 @@ ui/pages/
 ## 📝 메모
 
 ### 기술적 고려사항
+
 - LangGraph 버전 호환성 확인 필요
 - MCP 어댑터 최신 버전 확인
 - Anthropic API 비용 모니터링 설정
 
 ### 비즈니스 고려사항
+
 - Beta 테스터 10명 모집 계획
 - 초기 가격 정책 확정
 - 경쟁사 모니터링
 
 ---
 
-*이 문서는 프로젝트 진행에 따라 지속적으로 업데이트됩니다.*
+_이 문서는 프로젝트 진행에 따라 지속적으로 업데이트됩니다._

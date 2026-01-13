@@ -1,6 +1,6 @@
 """Service modules."""
 
-from src.services.export_service import ExportService, ExportFormat
+from src.services.export_service import ExportFormat, ExportService
 
 __all__ = [
     "ExportService",

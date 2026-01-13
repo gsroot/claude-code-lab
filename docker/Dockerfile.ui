@@ -1,4 +1,4 @@
-# ContentForge AI - Streamlit UI Dockerfile
+# Content Mate - Streamlit UI Dockerfile
 # Multi-stage build for optimized image size
 
 # Stage 1: Build dependencies

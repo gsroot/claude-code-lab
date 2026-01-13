@@ -1,7 +1,8 @@
 """Tests for the Researcher agent."""
 
+from unittest.mock import patch
+
 import pytest
-from unittest.mock import AsyncMock, patch
 
 from src.agents.researcher import ResearcherAgent
 from src.models.content import ContentRequest, ContentType

@@ -2,8 +2,8 @@
 
 import asyncio
 import functools
-from typing import Any, Callable, TypeVar
-from collections.abc import Awaitable
+from collections.abc import Awaitable, Callable
+from typing import Any, TypeVar
 
 from loguru import logger
 
@@ -77,7 +77,7 @@ def calculate_delay(attempt: int, config: RetryConfig) -> float:
     Returns:
         Delay in seconds
     """
-    delay = config.initial_delay * (config.exponential_base ** attempt)
+    delay = config.initial_delay * (config.exponential_base**attempt)
     return min(delay, config.max_delay)
 
 
@@ -145,10 +145,13 @@ def with_retry(
     Returns:
         Decorated function with retry logic
     """
+
     def decorator(func: Callable[..., Awaitable[T]]) -> Callable[..., Awaitable[T]]:
         @functools.wraps(func)
         async def wrapper(*args: Any, **kwargs: Any) -> T:
             name = operation_name or func.__name__
             return await retry_async(func, *args, config=config, operation_name=name, **kwargs)
+
         return wrapper
+
     return decorator

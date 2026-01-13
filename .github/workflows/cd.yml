@@ -3,13 +3,13 @@ name: CD
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Deployment environment'
+        description: "Deployment environment"
         required: true
-        default: 'staging'
+        default: "staging"
         type: choice
         options:
           - staging
@@ -90,7 +90,7 @@ jobs:
     if: github.event.inputs.environment == 'staging' || (github.event_name == 'push' && contains(github.ref, '-rc'))
     environment:
       name: staging
-      url: https://staging.contentforge.example.com
+      url: https://staging.contentmate.example.com
 
     steps:
       - name: Checkout code
@@ -109,7 +109,7 @@ jobs:
     if: github.event.inputs.environment == 'production' || (github.event_name == 'push' && !contains(github.ref, '-rc'))
     environment:
       name: production
-      url: https://contentforge.example.com
+      url: https://contentmate.example.com
 
     steps:
       - name: Checkout code

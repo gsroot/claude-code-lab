@@ -1,12 +1,12 @@
 [project]
-name = "contentforge-ai"
+name = "content-mate"
 version = "0.1.0"
 description = "Multi-agent AI content creation platform powered by LangGraph and MCP"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [
-    { name = "ContentForge Team" }
+    { name = "Content Mate Team" }
 ]
 keywords = ["ai", "content", "langgraph", "mcp", "agents", "automation"]
 
@@ -17,37 +17,31 @@ dependencies = [
     "langchain-anthropic>=0.3.0",
     "langchain-openai>=0.2.0",
     "langchain-mcp-adapters>=0.1.0",
-
     # MCP
     "mcp>=1.0.0",
-
     # API
     "fastapi>=0.115.0",
     "uvicorn[standard]>=0.32.0",
     "pydantic>=2.9.0",
     "pydantic-settings>=2.6.0",
-
     # Database
     "sqlalchemy>=2.0.0",
     "asyncpg>=0.30.0",
     "redis>=5.2.0",
-
     # Auth & Security
     "python-jose[cryptography]>=3.3.0",
     "passlib[bcrypt]>=1.7.4",
     "python-multipart>=0.0.12",
-
     # HTTP & Utils
     "httpx>=0.28.0",
     "aiofiles>=24.1.0",
     "python-dotenv>=1.0.0",
-
     # UI
     "streamlit>=1.40.0",
-
     # Observability
     "loguru>=0.7.0",
     "opentelemetry-api>=1.28.0",
+    "ruff>=0.14.11",
 ]
 
 [project.optional-dependencies]
@@ -61,7 +55,7 @@ dev = [
 ]
 
 [project.scripts]
-contentforge = "src.cli:main"
+contentmate = "src.cli:main"
 
 [build-system]
 requires = ["hatchling"]

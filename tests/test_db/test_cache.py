@@ -1,8 +1,9 @@
 """Tests for Redis cache module."""
 
 import json
+from unittest.mock import AsyncMock, MagicMock
+
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
 
 from src.db.cache import ContentCache, RateLimiter
 

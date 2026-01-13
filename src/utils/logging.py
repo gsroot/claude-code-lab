@@ -1,4 +1,4 @@
-"""Logging configuration for ContentForge AI."""
+"""Logging configuration for Content Mate."""
 
 import sys
 from pathlib import Path
@@ -108,10 +108,7 @@ class PipelineLogger:
     def phase_retry(self, phase: str, attempt: int, max_attempts: int, delay: float) -> None:
         """Log retry attempt."""
         self._logger.warning(
-            self._format_message(
-                phase,
-                f"Retry {attempt}/{max_attempts} after {delay:.1f}s"
-            )
+            self._format_message(phase, f"Retry {attempt}/{max_attempts} after {delay:.1f}s")
         )
 
     def info(self, phase: str, message: str) -> None:

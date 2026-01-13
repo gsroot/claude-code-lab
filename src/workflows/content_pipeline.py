@@ -5,27 +5,27 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Any, TypedDict
 
+from langchain_core.messages import BaseMessage
 from langgraph.graph import END, StateGraph
 from langgraph.graph.message import add_messages
-from langchain_core.messages import BaseMessage
 from loguru import logger
 
 from src.agents import EditorAgent, PlannerAgent, ResearcherAgent, WriterAgent
 from src.models.content import (
+    ContentOutline,
     ContentRequest,
     ContentResponse,
     ContentStatus,
     ResearchResult,
-    ContentOutline,
 )
-from src.utils.retry import retry_async, LLM_RETRY_CONFIG, RetryError
 from src.utils.exceptions import (
-    ResearchError,
-    PlanningError,
-    WritingError,
     EditingError,
+    PlanningError,
+    ResearchError,
+    WritingError,
 )
 from src.utils.logging import PipelineLogger
+from src.utils.retry import LLM_RETRY_CONFIG, RetryError, retry_async
 
 
 class ContentState(TypedDict):
@@ -372,8 +372,7 @@ class ContentPipeline:
 
             if final_status == ContentStatus.COMPLETED:
                 logger.info(
-                    f"[{content_id}] Generation completed successfully "
-                    f"in {processing_time:.2f}s"
+                    f"[{content_id}] Generation completed successfully in {processing_time:.2f}s"
                 )
             else:
                 logger.warning(

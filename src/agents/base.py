@@ -1,4 +1,4 @@
-"""Base agent class for ContentForge AI."""
+"""Base agent class for Content Mate."""
 
 from abc import ABC, abstractmethod
 from typing import Any
@@ -11,7 +11,7 @@ from src.utils.config import settings
 
 
 class BaseAgent(ABC):
-    """Base class for all ContentForge agents."""
+    """Base class for all ContentMate agents."""
 
     name: str = "base_agent"
     description: str = "Base agent"

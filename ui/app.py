@@ -1,7 +1,6 @@
-"""ContentForge AI - Streamlit UI Application."""
+"""Content Mate - Streamlit UI Application."""
 
 import time
-from datetime import datetime
 
 import httpx
 import streamlit as st
@@ -10,14 +9,15 @@ import streamlit as st
 API_BASE_URL = "http://localhost:8000/api/v1"
 
 st.set_page_config(
-    page_title="ContentForge AI",
+    page_title="Content Mate",
     page_icon="🚀",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 # Custom CSS
-st.markdown("""
+st.markdown(
+    """
 <style>
     .main-header {
         font-size: 2.5rem;
@@ -62,7 +62,9 @@ st.markdown("""
         border-left: 4px solid #D32F2F;
     }
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 
 # Initialize session state
@@ -77,7 +79,7 @@ if "generated_result" not in st.session_state:
 def main():
     """Main application entry point."""
     # Header
-    st.markdown('<p class="main-header">🚀 ContentForge AI</p>', unsafe_allow_html=True)
+    st.markdown('<p class="main-header">🚀 Content Mate</p>', unsafe_allow_html=True)
     st.markdown(
         '<p class="sub-header">Multi-Agent AI Content Creation Platform</p>',
         unsafe_allow_html=True,
@@ -442,7 +444,13 @@ def display_generated_content(result: dict):
                             params={"format": fmt},
                         )
                         if response.status_code == 200:
-                            ext = {"markdown": "md", "html": "html", "pdf": "html", "json": "json", "txt": "txt"}[fmt]
+                            ext = {
+                                "markdown": "md",
+                                "html": "html",
+                                "pdf": "html",
+                                "json": "json",
+                                "txt": "txt",
+                            }[fmt]
                             st.download_button(
                                 label=label,
                                 data=response.content,
@@ -625,10 +633,9 @@ def dashboard_tab():
 
     total = len(items)
     completed = sum(1 for i in items if i["status"] == "completed")
-    avg_time = (
-        sum(i.get("processing_time_seconds", 0) for i in items if i.get("processing_time_seconds"))
-        / max(completed, 1)
-    )
+    avg_time = sum(
+        i.get("processing_time_seconds", 0) for i in items if i.get("processing_time_seconds")
+    ) / max(completed, 1)
     success_rate = (completed / total * 100) if total > 0 else 0
 
     with col1:
@@ -658,6 +665,7 @@ def dashboard_tab():
 
         if type_counts:
             import pandas as pd
+
             df = pd.DataFrame(list(type_counts.items()), columns=["Type", "Count"])
             st.bar_chart(df.set_index("Type"))
 
@@ -670,6 +678,7 @@ def dashboard_tab():
 
         if status_counts:
             import pandas as pd
+
             df = pd.DataFrame(list(status_counts.items()), columns=["Status", "Count"])
             st.bar_chart(df.set_index("Status"))
 
@@ -679,7 +688,11 @@ def dashboard_tab():
 
     recent = items[:5]
     for item in recent:
-        status_emoji = "✅" if item["status"] == "completed" else ("❌" if item["status"] == "failed" else "⏳")
+        status_emoji = (
+            "✅"
+            if item["status"] == "completed"
+            else ("❌" if item["status"] == "failed" else "⏳")
+        )
         topic = item["request"]["topic"][:50]
         time_str = item.get("processing_time_seconds")
         time_display = f" ({time_str:.1f}s)" if time_str else ""

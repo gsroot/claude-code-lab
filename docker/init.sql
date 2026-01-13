@@ -1,4 +1,4 @@
--- ContentForge AI - PostgreSQL Initialization Script
+-- Content Mate - PostgreSQL Initialization Script
 -- This script runs when the database container is first created
 
 -- Create extensions
@@ -71,5 +71,5 @@ CREATE TRIGGER update_users_updated_at
     EXECUTE FUNCTION update_updated_at_column();
 
 -- Grant permissions
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO contentforge;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO contentforge;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO contentmate;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO contentmate;

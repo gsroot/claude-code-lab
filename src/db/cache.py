@@ -1,4 +1,4 @@
-"""Redis cache module for ContentForge AI."""
+"""Redis cache module for Content Mate."""
 
 import json
 from typing import Any

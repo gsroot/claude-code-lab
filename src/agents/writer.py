@@ -116,6 +116,8 @@ Always write content that provides genuine value to the reader."""
             prompt_parts.append(f"\nADDITIONAL INSTRUCTIONS: {request.additional_instructions}")
 
         prompt_parts.append("\n--- OUTPUT ---")
-        prompt_parts.append("Write the complete content now. Include proper formatting with headers (##), bullet points where appropriate, and ensure the content flows naturally.")
+        prompt_parts.append(
+            "Write the complete content now. Include proper formatting with headers (##), bullet points where appropriate, and ensure the content flows naturally."
+        )
 
         return "\n".join(prompt_parts)

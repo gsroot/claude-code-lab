@@ -62,7 +62,7 @@ Provide the fully edited content, maintaining the original structure but with im
 ORIGINAL REQUIREMENTS:
 - Topic: {request.topic}
 - Tone: {request.tone}
-- Target audience: {request.target_audience or 'General'}
+- Target audience: {request.target_audience or "General"}
 - Target word count: {request.word_count} words
 
 CONTENT TO EDIT:

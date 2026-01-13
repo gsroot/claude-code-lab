@@ -1,1 +1,1 @@
-"""Custom MCP servers for ContentForge AI."""
+"""Custom MCP servers for Content Mate."""

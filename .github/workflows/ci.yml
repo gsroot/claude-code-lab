@@ -66,9 +66,9 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_USER: contentforge
-          POSTGRES_PASSWORD: contentforge
-          POSTGRES_DB: contentforge_test
+          POSTGRES_USER: contentmate
+          POSTGRES_PASSWORD: contentmate
+          POSTGRES_DB: contentmate_test
         ports:
           - 5432:5432
         options: >-
@@ -106,7 +106,7 @@ jobs:
 
       - name: Run tests with coverage
         env:
-          DATABASE_URL: postgresql+asyncpg://contentforge:contentforge@localhost:5432/contentforge_test
+          DATABASE_URL: postgresql+asyncpg://contentmate:contentmate@localhost:5432/contentmate_test
           REDIS_URL: redis://localhost:6379/0
           ANTHROPIC_API_KEY: test-key
         run: |
@@ -137,7 +137,7 @@ jobs:
           context: .
           file: docker/Dockerfile.api
           push: false
-          tags: contentforge-api:latest
+          tags: contentmate-api:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -147,7 +147,7 @@ jobs:
           context: .
           file: docker/Dockerfile.ui
           push: false
-          tags: contentforge-ui:latest
+          tags: contentmate-ui:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
