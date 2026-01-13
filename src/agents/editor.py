@@ -53,6 +53,9 @@ Provide the fully edited content, maintaining the original structure but with im
         request = state.get("request")
         draft_content = state.get("draft_content")
 
+        if not request:
+            raise ValueError("No content request found in state")
+
         if not draft_content:
             raise ValueError("No draft content found in state")
 

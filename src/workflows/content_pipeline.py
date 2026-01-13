@@ -19,6 +19,7 @@ from src.models.content import (
     ResearchResult,
 )
 from src.utils.exceptions import (
+    ContentMateError,
     EditingError,
     PlanningError,
     ResearchError,
@@ -112,7 +113,7 @@ class ContentPipeline:
         agent_process: Any,
         state: ContentState,
         phase_name: str,
-        error_class: type[Exception],
+        error_class: type[ContentMateError],
     ) -> dict[str, Any]:
         """Execute an agent with retry logic.
 
@@ -154,7 +155,7 @@ class ContentPipeline:
                     "elapsed_ms": elapsed_ms,
                     "last_error": str(e.last_exception),
                 },
-            )
+            ) from e
 
     async def _research_node(self, state: ContentState) -> dict[str, Any]:
         """Execute the research agent with retry.

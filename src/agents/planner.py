@@ -2,12 +2,20 @@
 
 import json
 import re
-from typing import Any
+from typing import Any, TypedDict
 
 from langchain_core.messages import HumanMessage
 
 from src.agents.base import BaseAgent
 from src.models.content import ContentOutline
+
+
+class OutlineSection(TypedDict):
+    """Section structure for outline parsing."""
+
+    header: str
+    purpose: str
+    points: list[str]
 
 
 class PlannerAgent(BaseAgent):
@@ -194,8 +202,8 @@ You must respond with a valid JSON object in this exact format:
         lines = content.split("\n")
         title = "Content Outline"
         hook = ""
-        sections = []
-        current_section = None
+        sections: list[OutlineSection] = []
+        current_section: OutlineSection | None = None
 
         for line in lines:
             line = line.strip()

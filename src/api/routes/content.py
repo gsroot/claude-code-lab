@@ -1,5 +1,7 @@
 """Content generation API routes."""
 
+from typing import Annotated
+
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Query
 from fastapi.responses import Response
 from loguru import logger
@@ -37,7 +39,7 @@ async def create_content(request: ContentRequest):
         return response
     except Exception as e:
         logger.error(f"Content generation failed: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.post("/content/generate/async", response_model=dict)
@@ -158,7 +160,10 @@ async def delete_content(content_id: str):
 @router.get("/content/{content_id}/export")
 async def export_content(
     content_id: str,
-    format: ExportFormat = Query(default=ExportFormat.MARKDOWN, description="Export format"),
+    format: Annotated[
+        ExportFormat,
+        Query(default=ExportFormat.MARKDOWN, description="Export format"),
+    ],
 ):
     """Export content to various formats.
 
@@ -201,7 +206,7 @@ async def export_content(
         )
     except Exception as e:
         logger.error(f"Export failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Export failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Export failed: {str(e)}") from e
 
 
 @router.get("/content/{content_id}/export/formats")

@@ -1,5 +1,7 @@
 """Authentication routes."""
 
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from loguru import logger
@@ -20,8 +22,8 @@ security = HTTPBearer()
 
 
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-    db: AsyncSession = Depends(get_db),
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
+    db: Annotated[AsyncSession, Depends(get_db)],
 ) -> UserResponse:
     """Get current authenticated user.
 
@@ -66,7 +68,7 @@ async def get_current_user(
 
 
 async def get_current_active_user(
-    current_user: UserResponse = Depends(get_current_user),
+    current_user: Annotated[UserResponse, Depends(get_current_user)],
 ) -> UserResponse:
     """Get current active user (alias for get_current_user)."""
     return current_user
@@ -75,7 +77,7 @@ async def get_current_active_user(
 @router.post("/auth/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def register(
     user_data: UserCreate,
-    db: AsyncSession = Depends(get_db),
+    db: Annotated[AsyncSession, Depends(get_db)],
 ):
     """Register a new user.
 
@@ -97,13 +99,13 @@ async def register(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e),
-        )
+        ) from e
 
 
 @router.post("/auth/login", response_model=Token)
 async def login(
     login_data: UserLogin,
-    db: AsyncSession = Depends(get_db),
+    db: Annotated[AsyncSession, Depends(get_db)],
 ):
     """Login and get access token.
 
@@ -131,8 +133,8 @@ async def login(
 
 @router.post("/auth/refresh", response_model=Token)
 async def refresh_token(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-    db: AsyncSession = Depends(get_db),
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
+    db: Annotated[AsyncSession, Depends(get_db)],
 ):
     """Refresh access token using refresh token.
 
@@ -170,7 +172,7 @@ async def refresh_token(
 
 @router.get("/auth/me", response_model=UserResponse)
 async def get_me(
-    current_user: UserResponse = Depends(get_current_user),
+    current_user: Annotated[UserResponse, Depends(get_current_user)],
 ):
     """Get current user profile.
 
@@ -186,8 +188,8 @@ async def get_me(
 @router.post("/auth/change-password")
 async def change_password(
     password_data: ChangePassword,
-    current_user: UserResponse = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db),
+    current_user: Annotated[UserResponse, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_db)],
 ):
     """Change current user's password.
 
@@ -213,12 +215,12 @@ async def change_password(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e),
-        )
+        ) from e
 
 
 @router.post("/auth/logout")
 async def logout(
-    current_user: UserResponse = Depends(get_current_user),
+    current_user: Annotated[UserResponse, Depends(get_current_user)],
 ):
     """Logout current user.
 

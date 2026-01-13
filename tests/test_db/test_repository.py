@@ -70,7 +70,7 @@ class TestContentRepository:
     async def test_create_content(self, content_repo, sample_request, mock_session):
         """Test creating a new content record."""
         # Act
-        result = await content_repo.create(sample_request)
+        await content_repo.create(sample_request)
 
         # Assert
         mock_session.add.assert_called_once()

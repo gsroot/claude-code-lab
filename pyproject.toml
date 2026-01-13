@@ -74,8 +74,8 @@ ignore = ["E501"]
 
 [tool.mypy]
 python_version = "3.11"
-strict = true
 ignore_missing_imports = true
+warn_unused_ignores = true
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

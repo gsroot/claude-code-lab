@@ -98,7 +98,7 @@ def api_settings():
 
     # WebSocket settings
     st.subheader("WebSocket Connection")
-    ws_url = st.text_input(
+    st.text_input(
         "WebSocket URL",
         value="ws://localhost:8000/api/v1",
         help="WebSocket URL for real-time progress updates",
@@ -196,9 +196,9 @@ def generation_defaults():
         st.markdown("---")
         st.subheader("Generation Options")
 
-        include_research = st.checkbox("Include research findings in output", value=True)
-        include_outline = st.checkbox("Show content outline", value=True)
-        auto_export = st.checkbox("Auto-download after generation", value=False)
+        st.checkbox("Include research findings in output", value=True)
+        st.checkbox("Show content outline", value=True)
+        st.checkbox("Auto-download after generation", value=False)
 
     # Save button
     st.divider()
@@ -215,7 +215,7 @@ def appearance_settings():
     st.header("🎨 Appearance")
 
     st.subheader("Theme")
-    theme = st.selectbox(
+    st.selectbox(
         "Color Theme",
         ["System Default", "Light", "Dark"],
         help="Note: Theme changes may require app restart",
@@ -239,14 +239,14 @@ def appearance_settings():
     col1, col2 = st.columns(2)
 
     with col1:
-        show_api_status = st.checkbox("Show API status indicator", value=True)
-        show_word_count = st.checkbox("Show word count in results", value=True)
-        show_processing_time = st.checkbox("Show processing time", value=True)
+        st.checkbox("Show API status indicator", value=True)
+        st.checkbox("Show word count in results", value=True)
+        st.checkbox("Show processing time", value=True)
 
     with col2:
-        expand_outline = st.checkbox("Auto-expand outline section", value=False)
-        expand_research = st.checkbox("Auto-expand research section", value=False)
-        compact_history = st.checkbox("Compact history view", value=False)
+        st.checkbox("Auto-expand outline section", value=False)
+        st.checkbox("Auto-expand research section", value=False)
+        st.checkbox("Compact history view", value=False)
 
 
 def about_section():

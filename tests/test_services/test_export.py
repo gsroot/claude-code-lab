@@ -263,7 +263,7 @@ class TestPlainTextExport:
         # No list markers
         # Bullet points should be removed
         lines = text.split("\n")
-        bullet_lines = [l for l in lines if l.strip().startswith("-")]
+        bullet_lines = [line for line in lines if line.strip().startswith("-")]
         assert len(bullet_lines) == 0
 
 

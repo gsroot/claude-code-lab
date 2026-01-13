@@ -166,7 +166,7 @@ class TestAuthServiceAsync:
             full_name="New User",
         )
 
-        user = await auth_service.create_user(user_data)
+        await auth_service.create_user(user_data)
 
         mock_session.add.assert_called_once()
         mock_session.flush.assert_called_once()
