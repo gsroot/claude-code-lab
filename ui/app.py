@@ -295,8 +295,6 @@ def generate_content_with_progress(request_data: dict):
         max_wait_time = 600  # 10 minutes
         poll_interval = 2  # 2 seconds
 
-        current_phase_idx = 0
-
         while True:
             elapsed = time.time() - start_time
 
@@ -318,7 +316,7 @@ def generate_content_with_progress(request_data: dict):
                             new_phase_idx = phase_order.index(status)
 
                             # Update phase display
-                            for i, (phase_status, icon, name, desc) in enumerate(phases):
+                            for i, (_phase_status, icon, name, desc) in enumerate(phases):
                                 if i < new_phase_idx:
                                     # Completed phase
                                     phase_placeholders[i].markdown(
@@ -342,8 +340,6 @@ def generate_content_with_progress(request_data: dict):
                             # Update progress bar
                             progress = int((new_phase_idx / (len(phases) - 1)) * 100)
                             progress_bar.progress(progress)
-
-                            current_phase_idx = new_phase_idx
 
                         # Update time display
                         time_text.caption(f"⏱️ Elapsed: {elapsed:.0f}s")
