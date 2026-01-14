@@ -9,7 +9,7 @@ import streamlit as st
 API_BASE_URL = "http://localhost:8000/api/v1"
 
 st.set_page_config(
-    page_title="Content Mate",
+    page_title="콘텐츠 메이트",
     page_icon="🚀",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -75,71 +75,96 @@ if "current_content_id" not in st.session_state:
 if "generated_result" not in st.session_state:
     st.session_state.generated_result = None
 
+STATUS_LABELS = {
+    "completed": "완료",
+    "pending": "대기 중",
+    "researching": "리서치 중",
+    "planning": "기획 중",
+    "writing": "작성 중",
+    "editing": "편집 중",
+    "failed": "실패",
+}
+
+CONTENT_TYPE_LABELS = {
+    "blog_post": "블로그 글",
+    "article": "기사",
+    "social_media": "소셜 미디어",
+    "email": "이메일",
+    "landing_page": "랜딩 페이지",
+}
+
 
 def main():
     """Main application entry point."""
     # Header
-    st.markdown('<p class="main-header">🚀 Content Mate</p>', unsafe_allow_html=True)
+    st.markdown('<p class="main-header">🚀 콘텐츠 메이트</p>', unsafe_allow_html=True)
     st.markdown(
-        '<p class="sub-header">Multi-Agent AI Content Creation Platform</p>',
+        '<p class="sub-header">멀티 에이전트 AI 콘텐츠 제작 플랫폼</p>',
         unsafe_allow_html=True,
     )
 
     # Sidebar
     with st.sidebar:
-        st.header("⚙️ Generation Settings")
+        st.header("⚙️ 생성 설정")
 
         content_type = st.selectbox(
-            "Content Type",
+            "콘텐츠 유형",
             ["blog_post", "article", "social_media", "email", "landing_page"],
             index=0,
             format_func=lambda x: {
-                "blog_post": "📝 Blog Post",
-                "article": "📰 Article",
-                "social_media": "📱 Social Media",
-                "email": "✉️ Email",
-                "landing_page": "🌐 Landing Page",
+                "blog_post": "📝 블로그 글",
+                "article": "📰 기사",
+                "social_media": "📱 소셜 미디어",
+                "email": "✉️ 이메일",
+                "landing_page": "🌐 랜딩 페이지",
             }.get(x, x),
         )
 
         tone = st.selectbox(
-            "Tone",
+            "톤",
             ["professional", "casual", "educational", "persuasive", "entertaining"],
             index=0,
+            format_func=lambda x: {
+                "professional": "전문적",
+                "casual": "캐주얼",
+                "educational": "교육적",
+                "persuasive": "설득적",
+                "entertaining": "재미있는",
+            }.get(x, x),
         )
 
-        word_count = st.slider("Target Word Count", 100, 5000, 1500, step=100)
+        word_count = st.slider("목표 단어 수", 100, 5000, 1500, step=100)
 
         language = st.selectbox(
-            "Language",
+            "언어",
             ["en", "ko", "ja", "zh", "es", "fr", "de"],
-            index=0,
+            index=1,
             format_func=lambda x: {
-                "en": "🇺🇸 English",
+                "en": "🇺🇸 영어",
                 "ko": "🇰🇷 한국어",
-                "ja": "🇯🇵 日本語",
-                "zh": "🇨🇳 中文",
-                "es": "🇪🇸 Español",
-                "fr": "🇫🇷 Français",
-                "de": "🇩🇪 Deutsch",
+                "ja": "🇯🇵 일본어",
+                "zh": "🇨🇳 중국어",
+                "es": "🇪🇸 스페인어",
+                "fr": "🇫🇷 프랑스어",
+                "de": "🇩🇪 독일어",
             }.get(x, x),
         )
 
         st.divider()
-        st.markdown("### 🤖 Agent Pipeline")
+        st.markdown("### 🤖 에이전트 파이프라인")
         st.markdown("""
-        1. 🔍 **Researcher** - Gathers facts
-        2. 📋 **Planner** - Creates outline
-        3. ✍️ **Writer** - Creates draft
-        4. ✨ **Editor** - Polishes content
+        1. 🔍 **리서처** - 자료 수집
+        2. 📋 **플래너** - 개요 작성
+        3. ✍️ **라이터** - 초안 작성
+        4. ✨ **에디터** - 콘텐츠 다듬기
         """)
 
         st.divider()
-        st.markdown("### 📚 Documentation")
-        st.markdown("[API Docs](/docs) | [GitHub](https://github.com)")
+        st.markdown("### 📚 문서")
+        st.markdown("[API 문서](/docs) | [GitHub](https://github.com)")
 
     # Main content area
-    tab1, tab2, tab3 = st.tabs(["✨ Create", "📚 History", "📊 Dashboard"])
+    tab1, tab2, tab3 = st.tabs(["✨ 생성", "📚 기록", "📊 대시보드"])
 
     with tab1:
         create_content_tab(content_type, tone, word_count, language)
@@ -153,7 +178,7 @@ def main():
 
 def create_content_tab(content_type: str, tone: str, word_count: int, language: str):
     """Content creation tab with real-time progress."""
-    st.header("Create New Content")
+    st.header("새 콘텐츠 생성")
 
     # Show result if available
     if st.session_state.generated_result:
@@ -165,53 +190,53 @@ def create_content_tab(content_type: str, tone: str, word_count: int, language: 
 
     with col1:
         topic = st.text_area(
-            "📝 Topic / Idea",
-            placeholder="Enter your content topic or idea...\n\nExample: How AI is transforming content marketing in 2025",
+            "📝 주제 / 아이디어",
+            placeholder="콘텐츠 주제 또는 아이디어를 입력하세요...\n\n예시: 2025년 콘텐츠 마케팅을 바꾸는 AI",
             height=100,
         )
 
         target_audience = st.text_input(
-            "🎯 Target Audience (optional)",
-            placeholder="e.g., Marketing professionals, startup founders",
+            "🎯 대상 독자(선택)",
+            placeholder="예: 마케팅 전문가, 스타트업 창업자",
         )
 
         keywords = st.text_input(
-            "🔑 SEO Keywords (optional, comma-separated)",
-            placeholder="e.g., AI content, content marketing, automation",
+            "🔑 SEO 키워드(선택, 쉼표로 구분)",
+            placeholder="예: AI 콘텐츠, 콘텐츠 마케팅, 자동화",
         )
 
         additional_instructions = st.text_area(
-            "📋 Additional Instructions (optional)",
-            placeholder="Any specific requirements or preferences...",
+            "📋 추가 지시사항(선택)",
+            placeholder="특별히 반영할 요구사항이나 선호도를 입력하세요...",
             height=80,
         )
 
     with col2:
         st.info("""
-        **Tips for best results:**
-        - Be specific about your topic
-        - Include target audience info
-        - Add relevant keywords
-        - Specify any must-include points
+        **좋은 결과를 얻는 팁:**
+        - 주제를 구체적으로 작성하세요
+        - 대상 독자 정보를 포함하세요
+        - 관련 키워드를 추가하세요
+        - 반드시 포함할 요소를 적어주세요
         """)
 
         # API Status indicator
         api_status = check_api_status()
         if api_status:
-            st.success("🟢 API Server Online")
+            st.success("🟢 API 서버 온라인")
         else:
-            st.error("🔴 API Server Offline")
-            st.caption("Start with: `uv run uvicorn src.api.main:app --reload`")
+            st.error("🔴 API 서버 오프라인")
+            st.caption("다음 명령으로 시작하세요: `uv run uvicorn src.api.main:app --reload`")
 
     # Generate button
     if st.button(
-        "🚀 Generate Content",
+        "🚀 콘텐츠 생성",
         type="primary",
         use_container_width=True,
         disabled=not api_status,
     ):
         if not topic or len(topic.strip()) < 5:
-            st.error("Please enter a topic (at least 5 characters)!")
+            st.error("주제를 입력해 주세요 (최소 5자)!")
             return
 
         # Prepare request
@@ -245,12 +270,12 @@ def generate_content_with_progress(request_data: dict):
 
     # Progress phases configuration
     phases = [
-        ("pending", "⏳", "Initializing", "Starting content generation..."),
-        ("researching", "🔍", "Researching", "Gathering information about the topic..."),
-        ("planning", "📋", "Planning", "Creating content outline..."),
-        ("writing", "✍️", "Writing", "Writing the initial draft..."),
-        ("editing", "✨", "Editing", "Polishing and improving content..."),
-        ("completed", "✅", "Complete", "Content generation finished!"),
+        ("pending", "⏳", "초기화", "콘텐츠 생성을 시작합니다..."),
+        ("researching", "🔍", "리서치", "주제에 대한 정보를 수집합니다..."),
+        ("planning", "📋", "기획", "콘텐츠 개요를 작성합니다..."),
+        ("writing", "✍️", "작성", "초안을 작성합니다..."),
+        ("editing", "✨", "편집", "콘텐츠를 다듬고 개선합니다..."),
+        ("completed", "✅", "완료", "콘텐츠 생성이 완료되었습니다!"),
     ]
 
     phase_order = ["pending", "researching", "planning", "writing", "editing", "completed"]
@@ -269,8 +294,8 @@ def generate_content_with_progress(request_data: dict):
         st.session_state.current_content_id = content_id
 
         # Create progress UI
-        st.markdown("### 🤖 AI Agents Working...")
-        st.markdown(f"Content ID: `{content_id[:8]}...`")
+        st.markdown("### 🤖 AI 에이전트 작업 중...")
+        st.markdown(f"콘텐츠 ID: `{content_id[:8]}...`")
 
         progress_bar = st.progress(0)
         phase_container = st.container()
@@ -299,7 +324,7 @@ def generate_content_with_progress(request_data: dict):
             elapsed = time.time() - start_time
 
             if elapsed > max_wait_time:
-                st.error("⏰ Generation timed out. Please try again.")
+                st.error("⏰ 생성 시간이 초과되었습니다. 다시 시도해 주세요.")
                 return
 
             # Get current status
@@ -342,12 +367,12 @@ def generate_content_with_progress(request_data: dict):
                             progress_bar.progress(progress)
 
                         # Update time display
-                        time_text.caption(f"⏱️ Elapsed: {elapsed:.0f}s")
+                        time_text.caption(f"⏱️ 경과 시간: {elapsed:.0f}초")
 
                         # Check if completed
                         if status == "completed":
                             progress_bar.progress(100)
-                            status_text.success("✅ Content generation complete!")
+                            status_text.success("✅ 콘텐츠 생성 완료!")
 
                             # Store result and refresh
                             st.session_state.generated_result = result
@@ -359,76 +384,77 @@ def generate_content_with_progress(request_data: dict):
                         # Check if failed
                         if status == "failed":
                             progress_bar.progress(0)
-                            status_text.error("❌ Content generation failed")
-                            st.error(result.get("error", "Unknown error"))
+                            status_text.error("❌ 콘텐츠 생성 실패")
+                            st.error(result.get("error", "알 수 없는 오류"))
                             return
 
             except Exception as e:
-                st.warning(f"Polling error (retrying): {e}")
+                st.warning(f"상태 확인 오류 (재시도 중): {e}")
 
             time.sleep(poll_interval)
 
     except httpx.ConnectError:
-        st.error("❌ Cannot connect to API server")
-        st.info("Make sure the server is running: `uv run uvicorn src.api.main:app --reload`")
+        st.error("❌ API 서버에 연결할 수 없습니다")
+        st.info("서버가 실행 중인지 확인하세요: `uv run uvicorn src.api.main:app --reload`")
     except Exception as e:
-        st.error(f"Error: {str(e)}")
+        st.error(f"오류: {str(e)}")
 
 
 def display_generated_content(result: dict):
     """Display generated content result."""
-    st.success("✅ Content generated successfully!")
+    st.success("✅ 콘텐츠가 성공적으로 생성되었습니다!")
 
     # Metadata summary
-    st.subheader("📊 Generation Summary")
+    st.subheader("📊 생성 요약")
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-        st.metric("Status", result.get("status", "Unknown").title())
+        st.metric("상태", STATUS_LABELS.get(result.get("status"), "알 수 없음"))
     with col2:
         processing_time = result.get("processing_time_seconds")
-        st.metric("Time", f"{processing_time:.1f}s" if processing_time else "N/A")
+        st.metric("시간", f"{processing_time:.1f}초" if processing_time else "없음")
     with col3:
         content = result.get("content", "")
-        st.metric("Words", len(content.split()) if content else 0)
+        st.metric("단어 수", len(content.split()) if content else 0)
     with col4:
-        st.metric("Type", result.get("request", {}).get("content_type", "N/A"))
+        content_type = result.get("request", {}).get("content_type") or "없음"
+        st.metric("유형", CONTENT_TYPE_LABELS.get(content_type, content_type))
 
     # Outline
     outline = result.get("outline")
     if outline:
-        with st.expander("📋 Content Outline", expanded=False):
-            st.markdown(f"**Title:** {outline.get('title', 'N/A')}")
-            st.markdown(f"**Hook:** {outline.get('hook', 'N/A')}")
+        with st.expander("📋 콘텐츠 개요", expanded=False):
+            st.markdown(f"**제목:** {outline.get('title', '없음')}")
+            st.markdown(f"**후킹 문구:** {outline.get('hook', '없음')}")
 
             sections = outline.get("sections", [])
             if sections:
-                st.markdown("**Sections:**")
+                st.markdown("**섹션:**")
                 for i, section in enumerate(sections, 1):
-                    st.markdown(f"{i}. {section.get('header', 'Section')}")
+                    st.markdown(f"{i}. {section.get('header', '섹션')}")
 
             if outline.get("cta"):
                 st.markdown(f"**CTA:** {outline.get('cta')}")
 
     # Main content
-    st.subheader("📝 Generated Content")
+    st.subheader("📝 생성된 콘텐츠")
     content = result.get("content")
     if content:
         st.markdown(content)
 
         # Export section
         st.divider()
-        st.markdown("### 📥 Export Options")
+        st.markdown("### 📥 내보내기 옵션")
 
         content_id = result.get("id")
         export_cols = st.columns(5)
 
         formats = [
-            ("markdown", "📄 Markdown"),
+            ("markdown", "📄 마크다운"),
             ("html", "🌐 HTML"),
             ("pdf", "📑 PDF"),
             ("json", "📦 JSON"),
-            ("txt", "📝 Text"),
+            ("txt", "📝 텍스트"),
         ]
 
         for i, (fmt, label) in enumerate(formats):
@@ -457,33 +483,33 @@ def display_generated_content(result: dict):
                 except Exception:
                     st.button(label, disabled=True, key=f"btn_{fmt}")
     else:
-        st.warning("No content was generated")
+        st.warning("생성된 콘텐츠가 없습니다")
 
     # Research findings
     research = result.get("research")
     if research:
-        with st.expander("📚 Research Findings", expanded=False):
+        with st.expander("📚 조사 결과", expanded=False):
             col1, col2 = st.columns(2)
 
             with col1:
                 if research.get("key_facts"):
-                    st.markdown("**Key Facts:**")
+                    st.markdown("**핵심 사실:**")
                     for fact in research["key_facts"]:
                         st.markdown(f"- {fact}")
 
                 if research.get("statistics"):
-                    st.markdown("**Statistics:**")
+                    st.markdown("**통계:**")
                     for stat in research["statistics"]:
                         st.markdown(f"- {stat}")
 
             with col2:
                 if research.get("quotes"):
-                    st.markdown("**Quotes:**")
+                    st.markdown("**인용문:**")
                     for quote in research["quotes"]:
                         st.markdown(f"> {quote}")
 
                 if research.get("competitor_insights"):
-                    st.markdown("**Competitor Insights:**")
+                    st.markdown("**경쟁사 인사이트:**")
                     for insight in research["competitor_insights"]:
                         st.markdown(f"- {insight}")
 
@@ -492,25 +518,25 @@ def display_generated_content(result: dict):
     col1, col2 = st.columns(2)
 
     with col1:
-        if st.button("🔄 Create New Content", type="primary", use_container_width=True):
+        if st.button("🔄 새 콘텐츠 만들기", type="primary", use_container_width=True):
             st.session_state.generated_result = None
             st.session_state.current_content_id = None
             st.rerun()
 
     with col2:
-        if st.button("📋 Copy to Clipboard", use_container_width=True):
+        if st.button("📋 클립보드에 복사", use_container_width=True):
             st.code(content, language=None)
-            st.info("Select the text above and copy it!")
+            st.info("위 텍스트를 선택해 복사하세요!")
 
 
 def history_tab():
     """Content history tab."""
-    st.header("📚 Content History")
+    st.header("📚 콘텐츠 기록")
 
     # Refresh button
     col1, col2 = st.columns([4, 1])
     with col2:
-        if st.button("🔄 Refresh"):
+        if st.button("🔄 새로고침"):
             st.rerun()
 
     try:
@@ -520,7 +546,7 @@ def history_tab():
                 items = response.json()
 
                 if not items:
-                    st.info("📝 No content generated yet. Create your first content!")
+                    st.info("📝 아직 생성된 콘텐츠가 없습니다. 첫 콘텐츠를 만들어 보세요!")
                     return
 
                 # Summary stats
@@ -529,11 +555,11 @@ def history_tab():
 
                 stat_cols = st.columns(3)
                 with stat_cols[0]:
-                    st.metric("Total", len(items))
+                    st.metric("전체", len(items))
                 with stat_cols[1]:
-                    st.metric("✅ Completed", completed)
+                    st.metric("✅ 완료", completed)
                 with stat_cols[2]:
-                    st.metric("❌ Failed", failed)
+                    st.metric("❌ 실패", failed)
 
                 st.divider()
 
@@ -541,6 +567,11 @@ def history_tab():
                 for item in items:
                     topic = item["request"]["topic"][:60]
                     status = item["status"]
+                    status_label = STATUS_LABELS.get(status, status)
+                    content_type_label = CONTENT_TYPE_LABELS.get(
+                        item["request"]["content_type"],
+                        item["request"]["content_type"],
+                    )
                     status_emoji = {
                         "completed": "✅",
                         "failed": "❌",
@@ -554,12 +585,12 @@ def history_tab():
                     with st.expander(f"{status_emoji} {topic}..."):
                         col1, col2 = st.columns([3, 1])
                         with col1:
-                            st.markdown(f"**Type:** {item['request']['content_type']}")
-                            st.markdown(f"**Status:** {status}")
+                            st.markdown(f"**유형:** {content_type_label}")
+                            st.markdown(f"**상태:** {status_label}")
                             st.markdown(f"**ID:** `{item['id'][:8]}...`")
                         with col2:
                             if item.get("processing_time_seconds"):
-                                st.metric("Time", f"{item['processing_time_seconds']:.1f}s")
+                                st.metric("시간", f"{item['processing_time_seconds']:.1f}초")
 
                         if item.get("content"):
                             st.markdown("---")
@@ -578,7 +609,7 @@ def history_tab():
                                         )
                                         if exp_response.status_code == 200:
                                             st.download_button(
-                                                "📥 Export",
+                                                "📥 내보내기",
                                                 data=exp_response.content,
                                                 file_name="content.md",
                                                 key=f"export_{item['id']}",
@@ -587,14 +618,14 @@ def history_tab():
                                     pass
 
                             with action_cols[1]:
-                                if st.button("🗑️ Delete", key=f"delete_{item['id']}"):
+                                if st.button("🗑️ 삭제", key=f"delete_{item['id']}"):
                                     delete_content(item["id"])
             else:
-                st.warning("Could not load history")
+                st.warning("기록을 불러올 수 없습니다")
     except httpx.ConnectError:
-        st.info("🔌 API server not available. Start the server to view history.")
+        st.info("🔌 API 서버를 사용할 수 없습니다. 서버를 실행한 뒤 기록을 확인하세요.")
     except Exception as e:
-        st.error(f"Error loading history: {e}")
+        st.error(f"기록 로딩 오류: {e}")
 
 
 def delete_content(content_id: str):
@@ -603,18 +634,18 @@ def delete_content(content_id: str):
         with httpx.Client(timeout=10.0) as client:
             response = client.delete(f"{API_BASE_URL}/content/{content_id}")
             if response.status_code == 200:
-                st.success("✅ Content deleted!")
+                st.success("✅ 콘텐츠가 삭제되었습니다!")
                 time.sleep(0.5)
                 st.rerun()
             else:
-                st.error("Failed to delete content")
+                st.error("콘텐츠 삭제에 실패했습니다")
     except Exception as e:
-        st.error(f"Delete error: {e}")
+        st.error(f"삭제 오류: {e}")
 
 
 def dashboard_tab():
     """Dashboard/analytics tab."""
-    st.header("📊 Dashboard")
+    st.header("📊 대시보드")
 
     # Fetch data
     try:
@@ -635,16 +666,16 @@ def dashboard_tab():
     success_rate = (completed / total * 100) if total > 0 else 0
 
     with col1:
-        st.metric("📄 Total Content", total)
+        st.metric("📄 전체 콘텐츠", total)
     with col2:
-        st.metric("✅ Completed", completed)
+        st.metric("✅ 완료", completed)
     with col3:
-        st.metric("⏱️ Avg. Time", f"{avg_time:.1f}s")
+        st.metric("⏱️ 평균 시간", f"{avg_time:.1f}초")
     with col4:
-        st.metric("📈 Success Rate", f"{success_rate:.0f}%")
+        st.metric("📈 성공률", f"{success_rate:.0f}%")
 
     if not items:
-        st.info("📝 Dashboard metrics will populate once you start generating content.")
+        st.info("📝 콘텐츠 생성을 시작하면 대시보드 지표가 표시됩니다.")
         return
 
     st.divider()
@@ -653,34 +684,36 @@ def dashboard_tab():
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("📊 Content by Type")
+        st.subheader("📊 콘텐츠 유형별")
         type_counts = {}
         for item in items:
             ct = item["request"]["content_type"]
-            type_counts[ct] = type_counts.get(ct, 0) + 1
+            ct_label = CONTENT_TYPE_LABELS.get(ct, ct)
+            type_counts[ct_label] = type_counts.get(ct_label, 0) + 1
 
         if type_counts:
             import pandas as pd
 
-            df = pd.DataFrame(list(type_counts.items()), columns=["Type", "Count"])
-            st.bar_chart(df.set_index("Type"))
+            df = pd.DataFrame(list(type_counts.items()), columns=["유형", "건수"])
+            st.bar_chart(df.set_index("유형"))
 
     with col2:
-        st.subheader("📊 Status Distribution")
+        st.subheader("📊 상태 분포")
         status_counts = {}
         for item in items:
             s = item["status"]
-            status_counts[s] = status_counts.get(s, 0) + 1
+            status_label = STATUS_LABELS.get(s, s)
+            status_counts[status_label] = status_counts.get(status_label, 0) + 1
 
         if status_counts:
             import pandas as pd
 
-            df = pd.DataFrame(list(status_counts.items()), columns=["Status", "Count"])
-            st.bar_chart(df.set_index("Status"))
+            df = pd.DataFrame(list(status_counts.items()), columns=["상태", "건수"])
+            st.bar_chart(df.set_index("상태"))
 
     # Recent activity
     st.divider()
-    st.subheader("📅 Recent Activity")
+    st.subheader("📅 최근 활동")
 
     recent = items[:5]
     for item in recent:
@@ -691,7 +724,7 @@ def dashboard_tab():
         )
         topic = item["request"]["topic"][:50]
         time_str = item.get("processing_time_seconds")
-        time_display = f" ({time_str:.1f}s)" if time_str else ""
+        time_display = f" ({time_str:.1f}초)" if time_str else ""
 
         st.markdown(f"- {status_emoji} **{topic}...**{time_display}")
 
