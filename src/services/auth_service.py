@@ -26,6 +26,8 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 class AuthService:
     """Service for authentication operations."""
 
+    _BCRYPT_MAX_BYTES = 72
+
     def __init__(self, session: AsyncSession):
         self.session = session
 
@@ -40,7 +42,8 @@ class AuthService:
         Returns:
             True if password matches
         """
-        return cast(bool, pwd_context.verify(plain_password, hashed_password))
+        normalized = AuthService._normalize_password(plain_password)
+        return cast(bool, pwd_context.verify(normalized, hashed_password))
 
     @staticmethod
     def hash_password(password: str) -> str:
@@ -52,7 +55,16 @@ class AuthService:
         Returns:
             Hashed password
         """
-        return cast(str, pwd_context.hash(password))
+        normalized = AuthService._normalize_password(password)
+        return cast(str, pwd_context.hash(normalized))
+
+    @staticmethod
+    def _normalize_password(password: str) -> str:
+        """Normalize password for bcrypt limits."""
+        password_bytes = password.encode("utf-8")
+        if len(password_bytes) <= AuthService._BCRYPT_MAX_BYTES:
+            return password
+        return password_bytes[: AuthService._BCRYPT_MAX_BYTES].decode("utf-8", errors="ignore")
 
     @staticmethod
     def create_access_token(
