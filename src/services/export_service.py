@@ -3,6 +3,7 @@
 import html
 import re
 from enum import Enum
+from typing import Any
 
 from loguru import logger
 
@@ -316,7 +317,7 @@ class ExportService:
         """
         import json
 
-        data = {
+        data: dict[str, Any] = {
             "id": content.id,
             "status": content.status.value,
             "request": {

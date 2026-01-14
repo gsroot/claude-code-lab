@@ -1,6 +1,5 @@
 """Tests for retry utilities."""
 
-
 import pytest
 
 from src.utils.retry import (

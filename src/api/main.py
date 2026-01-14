@@ -63,7 +63,7 @@ app.include_router(websocket.router, prefix="/api/v1", tags=["websocket"])
 
 
 @app.get("/")
-async def root():
+async def root() -> dict[str, str]:
     """Root endpoint."""
     return {
         "name": "Content Mate",
@@ -74,7 +74,7 @@ async def root():
 
 
 @app.get("/health")
-async def health_check():
+async def health_check() -> dict[str, str]:
     """Health check endpoint."""
     return {"status": "healthy"}
 

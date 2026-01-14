@@ -3,11 +3,12 @@
 import time
 import uuid
 from datetime import datetime
-from typing import Annotated, Any, TypedDict
+from typing import Annotated, Any, TypedDict, cast
 
 from langchain_core.messages import BaseMessage
-from langgraph.graph import END, StateGraph
+from langgraph.graph import END
 from langgraph.graph.message import add_messages
+from langgraph.graph.state import CompiledStateGraph, StateGraph
 from loguru import logger
 
 from src.agents import EditorAgent, PlannerAgent, ResearcherAgent, WriterAgent
@@ -19,6 +20,7 @@ from src.models.content import (
     ResearchResult,
 )
 from src.utils.exceptions import (
+    ContentMateError,
     EditingError,
     PlanningError,
     ResearchError,
@@ -69,17 +71,19 @@ class ContentPipeline:
     - Structured logging
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the content pipeline with all agents."""
         self.researcher = ResearcherAgent()
         self.planner = PlannerAgent()
         self.writer = WriterAgent()
         self.editor = EditorAgent()
 
-        self.graph = self._build_graph()
+        self.graph: CompiledStateGraph[ContentState, None, ContentState, ContentState] = (
+            self._build_graph()
+        )
         logger.info("ContentPipeline initialized with 4 agents (retry enabled)")
 
-    def _build_graph(self) -> StateGraph:
+    def _build_graph(self) -> CompiledStateGraph[ContentState, None, ContentState, ContentState]:
         """Build the LangGraph workflow.
 
         Pipeline: Research → Plan → Write → Edit → Finalize
@@ -87,7 +91,9 @@ class ContentPipeline:
         Returns:
             Compiled StateGraph
         """
-        workflow = StateGraph(ContentState)
+        workflow: StateGraph[ContentState, None, ContentState, ContentState] = StateGraph(
+            ContentState
+        )
 
         # Add nodes for each agent
         workflow.add_node("research", self._research_node)
@@ -112,7 +118,7 @@ class ContentPipeline:
         agent_process: Any,
         state: ContentState,
         phase_name: str,
-        error_class: type[Exception],
+        error_class: type[ContentMateError],
     ) -> dict[str, Any]:
         """Execute an agent with retry logic.
 
@@ -131,11 +137,14 @@ class ContentPipeline:
         pipeline_logger.phase_start(phase_name)
 
         try:
-            result = await retry_async(
-                agent_process,
-                dict(state),
-                config=LLM_RETRY_CONFIG,
-                operation_name=f"{phase_name}_agent",
+            result = cast(
+                dict[str, Any],
+                await retry_async(
+                    agent_process,
+                    dict(state),
+                    config=LLM_RETRY_CONFIG,
+                    operation_name=f"{phase_name}_agent",
+                ),
             )
 
             elapsed_ms = (time.time() - start_time) * 1000

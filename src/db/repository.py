@@ -1,11 +1,12 @@
 """Repository pattern for database operations."""
 
 from datetime import datetime
-from typing import Any
+from typing import Any, cast
 from uuid import uuid4
 
 from loguru import logger
 from sqlalchemy import delete, select, update
+from sqlalchemy.engine import CursorResult
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db.models import ContentDB
@@ -119,7 +120,8 @@ class ContentRepository:
             update(ContentDB).where(ContentDB.id == content_id).values(**values)
         )
 
-        return result.rowcount > 0
+        rowcount = cast(CursorResult[Any], result).rowcount or 0
+        return rowcount > 0
 
     async def update_content(
         self,
@@ -166,7 +168,8 @@ class ContentRepository:
             update(ContentDB).where(ContentDB.id == content_id).values(**values)
         )
 
-        return result.rowcount > 0
+        rowcount = cast(CursorResult[Any], result).rowcount or 0
+        return rowcount > 0
 
     async def delete(self, content_id: str) -> bool:
         """Delete content by ID.
@@ -179,7 +182,8 @@ class ContentRepository:
         """
         result = await self.session.execute(delete(ContentDB).where(ContentDB.id == content_id))
 
-        return result.rowcount > 0
+        rowcount = cast(CursorResult[Any], result).rowcount or 0
+        return rowcount > 0
 
     async def count(
         self,

@@ -14,7 +14,7 @@ router = APIRouter()
 class ConnectionManager:
     """Manages WebSocket connections for real-time updates."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize connection manager."""
         # content_id -> list of WebSocket connections
         self.active_connections: dict[str, list[WebSocket]] = {}
@@ -236,7 +236,7 @@ def remove_progress_tracker(content_id: str) -> None:
 
 
 @router.websocket("/ws/content/{content_id}")
-async def websocket_content_progress(websocket: WebSocket, content_id: str):
+async def websocket_content_progress(websocket: WebSocket, content_id: str) -> None:
     """WebSocket endpoint for real-time content generation progress.
 
     Clients connect to receive updates about a specific content generation job.
@@ -317,7 +317,7 @@ async def websocket_content_progress(websocket: WebSocket, content_id: str):
 
 
 @router.websocket("/ws/broadcast")
-async def websocket_broadcast(websocket: WebSocket):
+async def websocket_broadcast(websocket: WebSocket) -> None:
     """WebSocket endpoint for receiving all content generation updates.
 
     Useful for admin dashboards or monitoring tools.

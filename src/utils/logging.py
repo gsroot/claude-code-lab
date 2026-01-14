@@ -2,6 +2,7 @@
 
 import sys
 from pathlib import Path
+from typing import Any
 
 from loguru import logger
 
@@ -60,7 +61,7 @@ def setup_logging(
     logger.info(f"Logging configured: level={log_level}, json={json_format}")
 
 
-def get_pipeline_logger(content_id: str):
+def get_pipeline_logger(content_id: str) -> Any:
     """Get a logger with content_id context.
 
     Args:

@@ -36,6 +36,7 @@ dependencies = [
     "httpx>=0.28.0",
     "aiofiles>=24.1.0",
     "python-dotenv>=1.0.0",
+    "email-validator>=2.1.0",
     # UI
     "streamlit>=1.40.0",
     # Observability

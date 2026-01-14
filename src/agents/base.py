@@ -1,11 +1,13 @@
 """Base agent class for Content Mate."""
 
 from abc import ABC, abstractmethod
-from typing import Any
+from collections.abc import Sequence
+from typing import Any, cast
 
 from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import BaseMessage, SystemMessage
 from loguru import logger
+from pydantic import SecretStr
 
 from src.utils.config import settings
 
@@ -34,11 +36,13 @@ class BaseAgent(ABC):
         self.temperature = temperature
         self.tools = tools or []
 
-        self.llm = ChatAnthropic(
-            model=self.model_name,
+        self.llm: Any = ChatAnthropic(
+            model_name=self.model_name,
             temperature=self.temperature,
-            api_key=settings.anthropic_api_key,
-            max_tokens=settings.max_tokens_per_request,
+            api_key=SecretStr(settings.anthropic_api_key),
+            max_tokens_to_sample=settings.max_tokens_per_request,
+            timeout=None,
+            stop=None,
         )
 
         if self.tools:
@@ -62,7 +66,7 @@ class BaseAgent(ABC):
         """
         pass
 
-    async def invoke(self, messages: list[BaseMessage]) -> BaseMessage:
+    async def invoke(self, messages: Sequence[BaseMessage]) -> BaseMessage:
         """Invoke the LLM with messages.
 
         Args:
@@ -71,10 +75,15 @@ class BaseAgent(ABC):
         Returns:
             LLM response message
         """
-        full_messages = [self.get_system_message()] + messages
-        response = await self.llm.ainvoke(full_messages)
+        full_messages = [self.get_system_message(), *list(messages)]
+        response = cast(BaseMessage, await self.llm.ainvoke(full_messages))
         logger.debug(f"{self.name} response: {response.content[:200]}...")
         return response
+
+    @staticmethod
+    def _as_text(content: Any) -> str:
+        """Coerce model content into plain text."""
+        return content if isinstance(content, str) else str(content)
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(name={self.name}, model={self.model_name})"

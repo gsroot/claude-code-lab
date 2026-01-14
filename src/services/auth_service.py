@@ -1,7 +1,7 @@
 """Authentication service with JWT handling."""
 
 from datetime import datetime, timedelta
-from typing import Any
+from typing import Any, cast
 
 from jose import JWTError, jwt
 from loguru import logger
@@ -40,7 +40,7 @@ class AuthService:
         Returns:
             True if password matches
         """
-        return pwd_context.verify(plain_password, hashed_password)
+        return cast(bool, pwd_context.verify(plain_password, hashed_password))
 
     @staticmethod
     def hash_password(password: str) -> str:
@@ -52,7 +52,7 @@ class AuthService:
         Returns:
             Hashed password
         """
-        return pwd_context.hash(password)
+        return cast(str, pwd_context.hash(password))
 
     @staticmethod
     def create_access_token(
@@ -82,10 +82,13 @@ class AuthService:
             }
         )
 
-        return jwt.encode(
-            to_encode,
-            settings.jwt_secret_key,
-            algorithm=settings.jwt_algorithm,
+        return cast(
+            str,
+            jwt.encode(
+                to_encode,
+                settings.jwt_secret_key,
+                algorithm=settings.jwt_algorithm,
+            ),
         )
 
     @staticmethod
@@ -100,10 +103,13 @@ class AuthService:
         """
         expire = datetime.utcnow() + timedelta(days=7)
 
-        return jwt.encode(
-            {"sub": user_id, "exp": expire, "type": "refresh"},
-            settings.jwt_secret_key,
-            algorithm=settings.jwt_algorithm,
+        return cast(
+            str,
+            jwt.encode(
+                {"sub": user_id, "exp": expire, "type": "refresh"},
+                settings.jwt_secret_key,
+                algorithm=settings.jwt_algorithm,
+            ),
         )
 
     @staticmethod
