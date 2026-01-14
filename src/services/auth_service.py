@@ -1,7 +1,10 @@
 """Authentication service with JWT handling."""
 
+import os
 from datetime import datetime, timedelta
 from typing import Any, cast
+
+os.environ.setdefault("PASSLIB_CRYPT", "disabled")
 
 from jose import JWTError, jwt
 from loguru import logger
