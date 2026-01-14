@@ -53,6 +53,9 @@ Provide the fully edited content, maintaining the original structure but with im
         request = state.get("request")
         draft_content = state.get("draft_content")
 
+        if not request:
+            raise ValueError("No content request found in state")
+
         if not draft_content:
             raise ValueError("No draft content found in state")
 
@@ -82,10 +85,11 @@ Please provide the fully edited content."""
 
         messages = [HumanMessage(content=editing_prompt)]
         response = await self.invoke(messages)
+        edited_content = self._as_text(response.content)
 
         return {
             **state,
-            "content": response.content,
+            "content": edited_content,
             "status": "editing_complete",
             "messages": state.get("messages", []) + [response],
         }

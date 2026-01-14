@@ -76,7 +76,7 @@ async def get_current_active_user(
 async def register(
     user_data: UserCreate,
     db: AsyncSession = Depends(get_db),  # noqa: B008
-):
+) -> UserResponse:
     """Register a new user.
 
     Args:
@@ -104,7 +104,7 @@ async def register(
 async def login(
     login_data: UserLogin,
     db: AsyncSession = Depends(get_db),  # noqa: B008
-):
+) -> Token:
     """Login and get access token.
 
     Args:
@@ -133,7 +133,7 @@ async def login(
 async def refresh_token(
     credentials: HTTPAuthorizationCredentials = Depends(security),  # noqa: B008
     db: AsyncSession = Depends(get_db),  # noqa: B008
-):
+) -> Token:
     """Refresh access token using refresh token.
 
     Args:
@@ -171,7 +171,7 @@ async def refresh_token(
 @router.get("/auth/me", response_model=UserResponse)
 async def get_me(
     current_user: UserResponse = Depends(get_current_user),  # noqa: B008
-):
+) -> UserResponse:
     """Get current user profile.
 
     Args:
@@ -188,7 +188,7 @@ async def change_password(
     password_data: ChangePassword,
     current_user: UserResponse = Depends(get_current_user),  # noqa: B008
     db: AsyncSession = Depends(get_db),  # noqa: B008
-):
+) -> dict[str, str]:
     """Change current user's password.
 
     Args:
@@ -219,7 +219,7 @@ async def change_password(
 @router.post("/auth/logout")
 async def logout(
     current_user: UserResponse = Depends(get_current_user),  # noqa: B008
-):
+) -> dict[str, str]:
     """Logout current user.
 
     Note: JWT tokens are stateless, so this endpoint is mainly

@@ -77,7 +77,7 @@ You must respond with a valid JSON object in this exact format:
         response = await self.invoke(messages)
 
         # Parse the outline from response
-        outline = self._parse_outline(response.content)
+        outline = self._parse_outline(self._as_text(response.content))
 
         return {
             **state,
@@ -194,8 +194,8 @@ You must respond with a valid JSON object in this exact format:
         lines = content.split("\n")
         title = "Content Outline"
         hook = ""
-        sections = []
-        current_section = None
+        sections: list[dict[str, Any]] = []
+        current_section: dict[str, Any] | None = None
 
         for line in lines:
             line = line.strip()

@@ -1,10 +1,11 @@
 """Redis cache module for Content Mate."""
 
 import json
-from typing import Any
+from collections.abc import Awaitable
+from typing import Any, cast
 
 from loguru import logger
-from redis.asyncio import Redis, from_url
+from redis.asyncio import Redis
 
 from src.utils.config import settings
 
@@ -21,7 +22,7 @@ async def get_redis() -> Redis:
     global _redis_client
 
     if _redis_client is None:
-        _redis_client = from_url(
+        _redis_client = Redis.from_url(
             settings.redis_url,
             encoding="utf-8",
             decode_responses=True,
@@ -48,7 +49,7 @@ async def check_redis_connection() -> bool:
     """
     try:
         redis = await get_redis()
-        await redis.ping()
+        await cast(Awaitable[bool], redis.ping())
         return True
     except Exception as e:
         logger.error(f"Redis connection check failed: {e}")
@@ -94,7 +95,7 @@ class ContentCache:
         data = await self.redis.get(key)
 
         if data:
-            return json.loads(data)
+            return cast(dict[str, Any], json.loads(data))
         return None
 
     async def set_content(
@@ -137,7 +138,7 @@ class ContentCache:
             Status string or None
         """
         key = f"{self.STATUS_PREFIX}{content_id}"
-        return await self.redis.get(key)
+        return cast(str | None, await self.redis.get(key))
 
     async def set_status(self, content_id: str, status: str, ttl: int | None = None) -> None:
         """Cache content status.
@@ -164,7 +165,7 @@ class ContentCache:
         data = await self.redis.get(key)
 
         if data:
-            return json.loads(data)
+            return cast(dict[str, Any], json.loads(data))
         return None
 
     async def set_progress(
@@ -217,7 +218,7 @@ class ContentCache:
             keys.append(key)
 
         if keys:
-            return await self.redis.delete(*keys)
+            return cast(int, await self.redis.delete(*keys))
         return 0
 
 

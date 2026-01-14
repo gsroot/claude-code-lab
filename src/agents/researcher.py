@@ -75,7 +75,7 @@ Focus on information that would resonate with {request.target_audience or "the g
         response = await self.invoke(messages)
 
         # Parse the research results
-        research = self._parse_research(response.content)
+        research = self._parse_research(self._as_text(response.content))
 
         return {
             **state,

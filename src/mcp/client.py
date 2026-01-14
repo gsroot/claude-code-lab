@@ -1,6 +1,6 @@
 """MCP Client for connecting to MCP servers and loading tools."""
 
-from typing import Any
+from typing import Any, cast
 
 from langchain_core.tools import BaseTool
 from langchain_mcp_adapters.client import MultiServerMCPClient
@@ -18,7 +18,7 @@ class MCPToolManager:
     - Providing tools to LangGraph agents
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the MCP tool manager."""
         self._client: MultiServerMCPClient | None = None
         self._tools: list[BaseTool] = []
@@ -32,12 +32,12 @@ class MCPToolManager:
         logger.info("Initializing MCP connections...")
 
         # Configure MCP servers
-        server_configs = self._get_server_configs()
+        server_configs = cast(Any, self._get_server_configs())
 
         try:
             self._client = MultiServerMCPClient(server_configs)
             await self._client.__aenter__()
-            self._tools = self._client.get_tools()
+            self._tools = await self._client.get_tools()
             self._initialized = True
 
             logger.info(f"MCP initialized with {len(self._tools)} tools")
@@ -99,7 +99,7 @@ class MCPToolManager:
     async def close(self) -> None:
         """Close all MCP connections."""
         if self._client:
-            await self._client.__aexit__(None, None, None)
+            await cast(Any, self._client.__aexit__)(None, None, None)
             self._client = None
             self._tools = []
             self._initialized = False

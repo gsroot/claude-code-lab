@@ -59,10 +59,11 @@ Always write content that provides genuine value to the reader."""
 
         messages = [HumanMessage(content=writing_prompt)]
         response = await self.invoke(messages)
+        draft_content = self._as_text(response.content)
 
         return {
             **state,
-            "draft_content": response.content,
+            "draft_content": draft_content,
             "status": "writing_complete",
             "messages": state.get("messages", []) + [response],
         }

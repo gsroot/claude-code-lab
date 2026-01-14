@@ -1,7 +1,10 @@
 """Authentication service with JWT handling."""
 
+import os
 from datetime import datetime, timedelta
-from typing import Any
+from typing import Any, cast
+
+os.environ.setdefault("PASSLIB_CRYPT", "disabled")
 
 from jose import JWTError, jwt
 from loguru import logger
@@ -20,11 +23,13 @@ from src.models.user import (
 from src.utils.config import settings
 
 # Password hashing context
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
 
 class AuthService:
     """Service for authentication operations."""
+
+    _BCRYPT_MAX_BYTES = 72
 
     def __init__(self, session: AsyncSession):
         self.session = session
@@ -40,7 +45,8 @@ class AuthService:
         Returns:
             True if password matches
         """
-        return pwd_context.verify(plain_password, hashed_password)
+        normalized = AuthService._normalize_password(plain_password)
+        return cast(bool, pwd_context.verify(normalized, hashed_password))
 
     @staticmethod
     def hash_password(password: str) -> str:
@@ -52,7 +58,16 @@ class AuthService:
         Returns:
             Hashed password
         """
-        return pwd_context.hash(password)
+        normalized = AuthService._normalize_password(password)
+        return cast(str, pwd_context.hash(normalized))
+
+    @staticmethod
+    def _normalize_password(password: str) -> str:
+        """Normalize password for bcrypt limits."""
+        password_bytes = password.encode("utf-8")
+        if len(password_bytes) <= AuthService._BCRYPT_MAX_BYTES:
+            return password
+        return password_bytes[: AuthService._BCRYPT_MAX_BYTES].decode("utf-8", errors="ignore")
 
     @staticmethod
     def create_access_token(
@@ -82,10 +97,13 @@ class AuthService:
             }
         )
 
-        return jwt.encode(
-            to_encode,
-            settings.jwt_secret_key,
-            algorithm=settings.jwt_algorithm,
+        return cast(
+            str,
+            jwt.encode(
+                to_encode,
+                settings.jwt_secret_key,
+                algorithm=settings.jwt_algorithm,
+            ),
         )
 
     @staticmethod
@@ -100,10 +118,13 @@ class AuthService:
         """
         expire = datetime.utcnow() + timedelta(days=7)
 
-        return jwt.encode(
-            {"sub": user_id, "exp": expire, "type": "refresh"},
-            settings.jwt_secret_key,
-            algorithm=settings.jwt_algorithm,
+        return cast(
+            str,
+            jwt.encode(
+                {"sub": user_id, "exp": expire, "type": "refresh"},
+                settings.jwt_secret_key,
+                algorithm=settings.jwt_algorithm,
+            ),
         )
 
     @staticmethod

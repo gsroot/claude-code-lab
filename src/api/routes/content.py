@@ -1,5 +1,7 @@
 """Content generation API routes."""
 
+from typing import Any
+
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Query
 from fastapi.responses import Response
 from loguru import logger
@@ -15,7 +17,7 @@ content_storage: dict[str, ContentResponse] = {}
 
 
 @router.post("/content/generate", response_model=ContentResponse)
-async def create_content(request: ContentRequest):
+async def create_content(request: ContentRequest) -> ContentResponse:
     """Generate new content using the AI pipeline.
 
     This endpoint triggers the full content generation pipeline:
@@ -44,7 +46,7 @@ async def create_content(request: ContentRequest):
 async def create_content_async(
     request: ContentRequest,
     background_tasks: BackgroundTasks,
-):
+) -> dict[str, str]:
     """Start async content generation.
 
     Returns immediately with a content ID that can be used to check status.
@@ -69,7 +71,7 @@ async def create_content_async(
     content_storage[content_id] = placeholder
 
     # Start background generation
-    async def generate_in_background():
+    async def generate_in_background() -> None:
         try:
             response = await generate_content(request)
             # Update the ID to match our placeholder
@@ -85,7 +87,7 @@ async def create_content_async(
 
 
 @router.get("/content/{content_id}", response_model=ContentResponse)
-async def get_content(content_id: str):
+async def get_content(content_id: str) -> ContentResponse:
     """Get content by ID.
 
     Args:
@@ -100,7 +102,7 @@ async def get_content(content_id: str):
 
 
 @router.get("/content/{content_id}/status")
-async def get_content_status(content_id: str):
+async def get_content_status(content_id: str) -> dict[str, Any]:
     """Get content generation status.
 
     Args:
@@ -123,7 +125,7 @@ async def get_content_status(content_id: str):
 
 
 @router.get("/content", response_model=list[ContentResponse])
-async def list_content(limit: int = 10, offset: int = 0):
+async def list_content(limit: int = 10, offset: int = 0) -> list[ContentResponse]:
     """List all generated content.
 
     Args:
@@ -139,7 +141,7 @@ async def list_content(limit: int = 10, offset: int = 0):
 
 
 @router.delete("/content/{content_id}")
-async def delete_content(content_id: str):
+async def delete_content(content_id: str) -> dict[str, str]:
     """Delete content by ID.
 
     Args:
@@ -162,7 +164,7 @@ async def export_content(
         default=ExportFormat.MARKDOWN,
         description="Export format",
     ),
-):
+) -> Response:
     """Export content to various formats.
 
     Supported formats:
@@ -208,7 +210,7 @@ async def export_content(
 
 
 @router.get("/content/{content_id}/export/formats")
-async def get_export_formats():
+async def get_export_formats() -> dict[str, list[dict[str, str]]]:
     """Get available export formats.
 
     Returns:
