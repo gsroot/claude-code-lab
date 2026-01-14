@@ -125,6 +125,10 @@ async def retry_async(
                 logger.error(
                     f"[Retry] {operation_name} failed after {config.max_attempts} attempts: {e}"
                 )
+        except Exception as e:
+            last_exception = e
+            logger.error(f"[Retry] {operation_name} failed with non-retryable error: {e}")
+            break
 
     raise RetryError(
         f"{operation_name} failed after {config.max_attempts} attempts",
